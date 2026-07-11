@@ -1,0 +1,4 @@
+"use client";
+import { useActionState } from "react";
+import { updateCourseStatus, type CourseActionState } from "@/app/actions/admin";
+export default function CourseStatusForm({ courseId, status }: { courseId: string; status: string }) { const [state, action, pending] = useActionState(updateCourseStatus, {} as CourseActionState); const nextStatus = status === "published" ? "draft" : "published"; return <form action={action} className="mt-4"><input type="hidden" name="courseId" value={courseId} /><input type="hidden" name="status" value={nextStatus} /><button disabled={pending} className="rounded-xl border border-[#007c8b] px-4 py-2 text-sm font-semibold text-[#007c8b]">{pending ? "Saving…" : nextStatus === "published" ? "Publish course" : "Unpublish course"}</button>{state.error && <p className="mt-2 text-sm text-red-700">{state.error}</p>}{state.success && <p className="mt-2 text-sm text-green-700">Status updated.</p>}</form>; }

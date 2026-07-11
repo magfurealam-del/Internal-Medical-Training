@@ -67,3 +67,16 @@ export async function assignCourse(_previousState: CourseActionState, formData: 
   revalidatePath("/dashboard");
   return { success: true };
 }
+
+export async function updateCourseStatus(_previousState: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const courseId = String(formData.get("courseId") ?? "");
+  const status = String(formData.get("status") ?? "");
+  if (!courseId || !["draft", "published", "archived"].includes(status)) return { error: "Invalid course status." };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("courses").update({ status }).eq("id", courseId);
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}`);
+  revalidatePath("/courses");
+  revalidatePath("/dashboard");
+  return { success: true };
+}

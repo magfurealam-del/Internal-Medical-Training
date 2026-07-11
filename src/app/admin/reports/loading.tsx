@@ -1,0 +1,3 @@
+export default function AdminReportsLoading() {
+  return <main className="mx-auto max-w-7xl px-6 py-16 lg:px-10" aria-busy="true"><div className="h-4 w-28 animate-pulse rounded bg-[#d9f2f4]" /><div className="mt-10 h-12 w-72 animate-pulse rounded bg-[#d9f2f4]" /><div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[1, 2, 3, 4].map((item) => <div key={item} className="h-28 animate-pulse rounded-2xl bg-white ring-1 ring-[#d5e9ed]" />)}</div><div className="mt-8 h-20 animate-pulse rounded-2xl bg-white ring-1 ring-[#d5e9ed]" /><div className="mt-5 h-80 animate-pulse rounded-2xl bg-white ring-1 ring-[#d5e9ed]" /></main>;
+}

@@ -1,0 +1,3 @@
+export default function CourseLoading() {
+  return <main className="mx-auto max-w-5xl px-6 py-16 lg:px-10" aria-busy="true"><div className="h-4 w-32 animate-pulse rounded bg-[#d9f2f4]" /><div className="mt-10 h-12 w-3/4 animate-pulse rounded bg-[#d9f2f4]" /><div className="mt-5 h-16 max-w-2xl animate-pulse rounded bg-[#d9f2f4]" /><div className="mt-8 h-28 animate-pulse rounded-2xl bg-[#002f65]/10" /><div className="mt-12 h-8 w-32 animate-pulse rounded bg-[#d9f2f4]" /><div className="mt-5 flex flex-col gap-3">{[1, 2, 3].map((item) => <div key={item} className="h-20 animate-pulse rounded-2xl bg-white ring-1 ring-[#d5e9ed]" />)}</div></main>;
+}

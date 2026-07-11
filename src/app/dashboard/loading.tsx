@@ -1,0 +1,3 @@
+export default function DashboardLoading() {
+  return <main className="mx-auto max-w-7xl px-6 py-16 lg:px-10" aria-busy="true"><div className="h-4 w-28 animate-pulse rounded bg-[#d9f2f4]" /><div className="mt-4 h-12 w-72 animate-pulse rounded bg-[#d9f2f4]" /><div className="mt-10 grid gap-4 sm:grid-cols-3">{[1, 2, 3].map((item) => <div key={item} className="h-28 animate-pulse rounded-2xl bg-white ring-1 ring-[#d5e9ed]" />)}</div><div className="mt-6 h-44 animate-pulse rounded-2xl bg-[#edf7f8]" /><div className="mt-10 grid gap-5 md:grid-cols-2">{[1, 2].map((item) => <div key={item} className="h-40 animate-pulse rounded-2xl bg-white ring-1 ring-[#d5e9ed]" />)}</div></main>;
+}

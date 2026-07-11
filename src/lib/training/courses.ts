@@ -7,7 +7,10 @@ export type Course = {
   description: string | null;
   status: string;
   content_version: string;
+  audience_groups?: AudienceGroup[];
 };
+
+export type AudienceGroup = { id: string; name: string; slug: string };
 
 export type Module = {
   id: string;
@@ -33,12 +36,12 @@ export async function listCourses() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("courses")
-    .select("id, title, slug, description, status, content_version")
+    .select("id, title, slug, description, status, content_version, course_audience_groups(audience_groups(id, name, slug))")
     .eq("status", "published")
     .order("title");
 
   if (error) throw new Error(error.message);
-  return (data ?? []) as Course[];
+  return (data ?? []).map((course) => ({ ...course, audience_groups: (course.course_audience_groups ?? []).flatMap((item) => item.audience_groups ?? []) })) as Course[];
 }
 
 export async function listAllCourses() {
@@ -76,7 +79,7 @@ export async function listEnrollmentReports() {
 export async function listProgressReports() {
   const supabase = await createSupabaseServerClient();
   const [{ data: enrollments, error: enrollmentError }, { data: lessons, error: lessonError }, { data: progress, error: progressError }, { data: attempts, error: attemptError }, { data: quizzes, error: quizError }, { data: courses, error: courseError }, { data: profiles, error: profileError }, { data: certificates, error: certificateError }] = await Promise.all([
-    supabase.from("enrollments").select("id, user_id, course_id, status, completed_at"),
+    supabase.from("enrollments").select("id, user_id, course_id, status, expires_at, completed_at"),
     supabase.from("lessons").select("id, modules!inner(course_id)").eq("is_required", true),
     supabase.from("lesson_progress").select("user_id, lesson_id").not("completed_at", "is", null),
     supabase.from("attempts").select("user_id, quiz_id, score_percentage, passed, submitted_at"),
@@ -101,7 +104,11 @@ export async function listProgressReports() {
     const courseAttempts = (attempts ?? []).filter((attempt) => attempt.user_id === enrollment.user_id && quizById.get(attempt.quiz_id) === enrollment.course_id);
     const latestAttempt = courseAttempts.sort((a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime())[0];
     const certificate = (certificates ?? []).find((item) => item.user_id === enrollment.user_id && item.course_id === enrollment.course_id);
-    return { ...enrollment, learner_name: profileMap.get(enrollment.user_id) ?? "Unknown learner", course_title: courseMap.get(enrollment.course_id) ?? "Unknown course", lessons_completed: completed, lessons_total: required.size, progress_percentage: required.size ? Math.round((completed / required.size) * 100) : 0, latest_score: latestAttempt?.score_percentage ?? null, latest_passed: latestAttempt?.passed ?? null, certificate_issued_at: certificate?.issued_at ?? null };
+    const progressPercentage = required.size ? Math.round((completed / required.size) * 100) : 0;
+    const expiresAt = enrollment.expires_at;
+    const daysUntilExpiry = expiresAt ? Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 86400000) : null;
+    const atRisk = progressPercentage < 100 && daysUntilExpiry !== null && daysUntilExpiry <= 14;
+    return { ...enrollment, learner_name: profileMap.get(enrollment.user_id) ?? "Unknown learner", course_title: courseMap.get(enrollment.course_id) ?? "Unknown course", lessons_completed: completed, lessons_total: required.size, progress_percentage: progressPercentage, latest_score: latestAttempt?.score_percentage ?? null, latest_passed: latestAttempt?.passed ?? null, certificate_issued_at: certificate?.issued_at ?? null, days_until_expiry: daysUntilExpiry, at_risk: atRisk };
   });
 }
 

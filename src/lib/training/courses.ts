@@ -98,3 +98,22 @@ export async function getLesson(lessonId: string) {
   if (error) throw new Error(error.message);
   return data as Lesson | null;
 }
+
+export async function getCourseProgress(courseId: string) {
+  const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+  if (!userId) return { completed: 0, total: 0, percentage: 0 };
+
+  const [{ data: lessons, error: lessonsError }, { data: progress, error: progressError }] = await Promise.all([
+    supabase.from("lessons").select("id, modules!inner(course_id)").eq("modules.course_id", courseId).eq("is_required", true),
+    supabase.from("lesson_progress").select("lesson_id").eq("user_id", userId).not("completed_at", "is", null),
+  ]);
+
+  if (lessonsError) throw new Error(lessonsError.message);
+  if (progressError) throw new Error(progressError.message);
+  const lessonIds = new Set((lessons ?? []).map((lesson) => lesson.id));
+  const completed = (progress ?? []).filter((item) => lessonIds.has(item.lesson_id)).length;
+  const total = lessonIds.size;
+  return { completed, total, percentage: total === 0 ? 0 : Math.round((completed / total) * 100) };
+}

@@ -9,6 +9,7 @@ export async function submitQuiz(_previousState: QuizState, formData: FormData):
 
   let answers: unknown;
   try { answers = JSON.parse(rawAnswers); } catch { return { error: "Invalid quiz submission." }; }
+  if (!Array.isArray(answers) || answers.length === 0) return { error: "Please select an answer before submitting." };
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.rpc("submit_quiz_attempt", { p_quiz_id: quizId, p_answers: answers });
   if (error) return { error: error.message };

@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function markLessonComplete(formData: FormData) {
@@ -25,4 +26,8 @@ export async function markLessonComplete(formData: FormData) {
   revalidatePath(`/courses/${courseId}/modules/${moduleId}`);
   revalidatePath(`/courses/${courseId}/modules/${moduleId}/lessons/${lessonId}`);
   revalidatePath("/dashboard");
+
+  const { data: quiz } = await supabase.from("quizzes").select("id").eq("module_id", moduleId).maybeSingle();
+  if (quiz) redirect(`/quiz/${quiz.id}`);
+  redirect(`/courses/${courseId}/modules/${moduleId}`);
 }

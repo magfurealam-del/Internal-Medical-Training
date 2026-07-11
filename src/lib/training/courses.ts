@@ -183,3 +183,14 @@ export async function getCourseProgress(courseId: string) {
   const total = lessonIds.size;
   return { completed, total, percentage: total === 0 ? 0 : Math.round((completed / total) * 100) };
 }
+
+export async function listCertificates() {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.from("certificates").select("id, certificate_number, course_id, issued_at").order("issued_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  const courseIds = (data ?? []).map((certificate) => certificate.course_id);
+  const { data: courses, error: courseError } = courseIds.length ? await supabase.from("courses").select("id, title").in("id", courseIds) : { data: [], error: null };
+  if (courseError) throw new Error(courseError.message);
+  const courseMap = new Map((courses ?? []).map((course) => [course.id, course.title]));
+  return (data ?? []).map((certificate) => ({ ...certificate, course_title: courseMap.get(certificate.course_id) ?? "Training course" }));
+}

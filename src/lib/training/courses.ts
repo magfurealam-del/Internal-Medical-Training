@@ -39,6 +39,16 @@ export async function listCourses() {
   return (data ?? []) as Course[];
 }
 
+export async function listAllCourses() {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("courses")
+    .select("id, title, slug, description, status, content_version")
+    .order("created_at", { ascending: false });
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Course[];
+}
+
 export async function getCourse(courseId: string) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase

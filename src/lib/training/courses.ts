@@ -27,6 +27,8 @@ export type Lesson = {
   is_required: boolean;
 };
 
+export type TrainingProfile = { id: string; full_name: string | null; role: string };
+
 export async function listCourses() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
@@ -47,6 +49,13 @@ export async function listAllCourses() {
     .order("created_at", { ascending: false });
   if (error) throw new Error(error.message);
   return (data ?? []) as Course[];
+}
+
+export async function listTrainingProfiles() {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.from("profiles").select("id, full_name, role").order("full_name");
+  if (error) throw new Error(error.message);
+  return (data ?? []) as TrainingProfile[];
 }
 
 export async function getCourse(courseId: string) {

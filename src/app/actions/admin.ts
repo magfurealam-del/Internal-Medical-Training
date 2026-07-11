@@ -54,3 +54,16 @@ export async function createLesson(_previousState: CourseActionState, formData: 
   revalidatePath(`/admin/courses/${courseId}`);
   return { success: true };
 }
+
+export async function assignCourse(_previousState: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const courseId = String(formData.get("courseId") ?? "");
+  const userId = String(formData.get("userId") ?? "");
+  const expiresAt = String(formData.get("expiresAt") ?? "").trim();
+  if (!courseId || !userId) return { error: "Course and learner are required." };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("enrollments").upsert({ user_id: userId, course_id: courseId, status: "active", expires_at: expiresAt || null }, { onConflict: "user_id,course_id" });
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}`);
+  revalidatePath("/dashboard");
+  return { success: true };
+}

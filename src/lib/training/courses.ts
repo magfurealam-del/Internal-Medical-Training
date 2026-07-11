@@ -73,6 +73,38 @@ export async function listEnrollmentReports() {
   return (enrollments ?? []).map((enrollment) => ({ ...enrollment, course_title: courseMap.get(enrollment.course_id) ?? "Unknown course", learner_name: profileMap.get(enrollment.user_id) ?? "Unknown learner" }));
 }
 
+export async function listProgressReports() {
+  const supabase = await createSupabaseServerClient();
+  const [{ data: enrollments, error: enrollmentError }, { data: lessons, error: lessonError }, { data: progress, error: progressError }, { data: attempts, error: attemptError }, { data: quizzes, error: quizError }, { data: courses, error: courseError }, { data: profiles, error: profileError }, { data: certificates, error: certificateError }] = await Promise.all([
+    supabase.from("enrollments").select("id, user_id, course_id, status, completed_at"),
+    supabase.from("lessons").select("id, modules!inner(course_id)").eq("is_required", true),
+    supabase.from("lesson_progress").select("user_id, lesson_id").not("completed_at", "is", null),
+    supabase.from("attempts").select("user_id, quiz_id, score_percentage, passed, submitted_at"),
+    supabase.from("quizzes").select("id, course_id"),
+    supabase.from("courses").select("id, title"),
+    supabase.from("profiles").select("id, full_name"),
+    supabase.from("certificates").select("user_id, course_id, issued_at"),
+  ]);
+  for (const error of [enrollmentError, lessonError, progressError, attemptError, quizError, courseError, profileError, certificateError]) if (error) throw new Error(error.message);
+  const courseMap = new Map((courses ?? []).map((course) => [course.id, course.title]));
+  const profileMap = new Map((profiles ?? []).map((profile) => [profile.id, profile.full_name || "Unnamed user"]));
+  const requiredByCourse = new Map<string, Set<string>>();
+  for (const lesson of lessons ?? []) {
+    const courseId = (lesson.modules as unknown as { course_id: string }).course_id;
+    if (!requiredByCourse.has(courseId)) requiredByCourse.set(courseId, new Set());
+    requiredByCourse.get(courseId)?.add(lesson.id);
+  }
+  const quizById = new Map((quizzes ?? []).map((quiz) => [quiz.id, quiz.course_id]));
+  return (enrollments ?? []).map((enrollment) => {
+    const required = requiredByCourse.get(enrollment.course_id) ?? new Set<string>();
+    const completed = new Set((progress ?? []).filter((item) => item.user_id === enrollment.user_id && required.has(item.lesson_id)).map((item) => item.lesson_id)).size;
+    const courseAttempts = (attempts ?? []).filter((attempt) => attempt.user_id === enrollment.user_id && quizById.get(attempt.quiz_id) === enrollment.course_id);
+    const latestAttempt = courseAttempts.sort((a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime())[0];
+    const certificate = (certificates ?? []).find((item) => item.user_id === enrollment.user_id && item.course_id === enrollment.course_id);
+    return { ...enrollment, learner_name: profileMap.get(enrollment.user_id) ?? "Unknown learner", course_title: courseMap.get(enrollment.course_id) ?? "Unknown course", lessons_completed: completed, lessons_total: required.size, progress_percentage: required.size ? Math.round((completed / required.size) * 100) : 0, latest_score: latestAttempt?.score_percentage ?? null, latest_passed: latestAttempt?.passed ?? null, certificate_issued_at: certificate?.issued_at ?? null };
+  });
+}
+
 export async function getCourse(courseId: string) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase

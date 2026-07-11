@@ -9,16 +9,6 @@ const foundations = [
 export default function Home() {
   return (
     <main className="flex-1 bg-[#f6feff] text-[#002f65]">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 lg:px-10">
-        <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-[#002f65] text-lg font-semibold text-white">E</div>
-          <span className="font-semibold tracking-tight">Medical Team Training</span>
-        </div>
-        <a className="rounded-full border border-[#b8dce1] px-5 py-2.5 text-sm font-medium transition hover:bg-white" href="/login">
-          Sign in
-        </a>
-      </nav>
-
       <section className="mx-auto grid max-w-7xl gap-12 px-6 pb-20 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-10 lg:pb-28 lg:pt-24">
         <div>
           <p className="mb-6 text-sm font-semibold uppercase tracking-[0.22em] text-[#007c8b]">Learning that supports better care</p>

@@ -4,8 +4,10 @@ import { getCourse, listLessons, listModules, listTrainingProfiles } from "@/lib
 import ModuleCreateForm from "@/app/admin/ModuleCreateForm";
 import LessonCreateForm from "@/app/admin/LessonCreateForm";
 import EnrollmentForm from "@/app/admin/EnrollmentForm";
+import { requireTrainingStaff } from "@/lib/training/auth";
 
 export default async function AdminCoursePage({ params }: { params: Promise<{ courseId: string }> }) {
+  await requireTrainingStaff();
   const { courseId } = await params;
   const [course, modules, profiles] = await Promise.all([getCourse(courseId), listModules(courseId), listTrainingProfiles()]);
   if (!course) notFound();

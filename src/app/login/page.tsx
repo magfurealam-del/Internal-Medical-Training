@@ -15,7 +15,7 @@ export default function LoginPage() {
     const supabase = createSupabaseBrowserClient();
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard` },
+      options: { shouldCreateUser: false, emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard` },
     });
     setLoading(false);
     setMessage(error ? error.message : "Check your email for a secure sign-in link.");

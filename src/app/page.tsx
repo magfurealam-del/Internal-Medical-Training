@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const foundations = [
   ["01", "Secure access", "Role-aware sign-in for learners, instructors, and administrators."],
   ["02", "Structured learning", "Courses, modules, lessons, assessments, and completion in one place."],
@@ -28,7 +30,7 @@ export default function Home() {
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
             <a className="rounded-full bg-[#002f65] px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#001f43]" href="/dashboard">Open dashboard</a>
-            <a className="rounded-full border border-[#b8dce1] bg-white px-6 py-3.5 text-sm font-semibold transition hover:border-[#007c8b]" href="/courses">Explore courses</a>
+            <Link className="rounded-full border border-[#b8dce1] bg-white px-6 py-3.5 text-sm font-semibold transition hover:border-[#007c8b]" href="/courses">Explore courses</Link>
           </div>
         </div>
 

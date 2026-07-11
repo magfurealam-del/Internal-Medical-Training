@@ -58,6 +58,21 @@ export async function listTrainingProfiles() {
   return (data ?? []) as TrainingProfile[];
 }
 
+export async function listEnrollmentReports() {
+  const supabase = await createSupabaseServerClient();
+  const [{ data: enrollments, error: enrollmentError }, { data: courses, error: courseError }, { data: profiles, error: profileError }] = await Promise.all([
+    supabase.from("enrollments").select("id, user_id, course_id, status, assigned_at, expires_at, completed_at").order("assigned_at", { ascending: false }),
+    supabase.from("courses").select("id, title"),
+    supabase.from("profiles").select("id, full_name"),
+  ]);
+  if (enrollmentError) throw new Error(enrollmentError.message);
+  if (courseError) throw new Error(courseError.message);
+  if (profileError) throw new Error(profileError.message);
+  const courseMap = new Map((courses ?? []).map((course) => [course.id, course.title]));
+  const profileMap = new Map((profiles ?? []).map((profile) => [profile.id, profile.full_name || "Unnamed user"]));
+  return (enrollments ?? []).map((enrollment) => ({ ...enrollment, course_title: courseMap.get(enrollment.course_id) ?? "Unknown course", learner_name: profileMap.get(enrollment.user_id) ?? "Unknown learner" }));
+}
+
 export async function getCourse(courseId: string) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase

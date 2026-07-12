@@ -278,6 +278,67 @@ export async function getPreviousAttempt(quizId: string) {
   return (data ?? [])[0] ?? null;
 }
 
+export async function getLearnerDetail(userId: string) {
+  const supabase = await createSupabaseServerClient();
+
+  const [
+    { data: profile },
+    { data: enrollments },
+    { data: progress },
+    { data: attempts },
+    { data: certificates },
+    { data: courses },
+    { data: allLessons },
+    { data: allModules },
+  ] = await Promise.all([
+    supabase.from("profiles").select("id, full_name, role").eq("id", userId).maybeSingle(),
+    supabase.from("enrollments").select("id, course_id, status, expires_at, completed_at, assigned_at").eq("user_id", userId),
+    supabase.from("lesson_progress").select("lesson_id, completed_at").eq("user_id", userId).not("completed_at", "is", null),
+    supabase.from("attempts").select("id, quiz_id, score_percentage, passed, submitted_at").eq("user_id", userId).order("submitted_at", { ascending: false }),
+    supabase.from("certificates").select("id, course_id, issued_at, certificate_number").eq("user_id", userId),
+    supabase.from("courses").select("id, title"),
+    supabase.from("lessons").select("id, module_id, title, sort_order, is_required").order("sort_order"),
+    supabase.from("modules").select("id, course_id, title, sort_order").order("sort_order"),
+  ]);
+
+  const courseMap = new Map((courses ?? []).map((c) => [c.id, c.title]));
+  const completedLessons = new Map((progress ?? []).map((p) => [p.lesson_id, p.completed_at as string]));
+  const certByCourse = new Map((certificates ?? []).map((c) => [c.course_id, c]));
+
+  const courseDetails = (enrollments ?? []).map((enrollment) => {
+    const courseModules = (allModules ?? [])
+      .filter((m) => m.course_id === enrollment.course_id)
+      .sort((a, b) => a.sort_order - b.sort_order);
+    const requiredLessons = (allLessons ?? []).filter((l) => {
+      const mod = (allModules ?? []).find((m) => m.id === l.module_id);
+      return mod?.course_id === enrollment.course_id && l.is_required;
+    });
+    const completedCount = requiredLessons.filter((l) => completedLessons.has(l.id)).length;
+    const moduleProgress = courseModules.map((mod) => ({
+      module: mod,
+      lessons: (allLessons ?? [])
+        .filter((l) => l.module_id === mod.id)
+        .sort((a, b) => a.sort_order - b.sort_order)
+        .map((l) => ({ ...l, completed_at: completedLessons.get(l.id) ?? null })),
+    }));
+    return {
+      enrollment,
+      course_title: courseMap.get(enrollment.course_id) ?? "Unknown course",
+      lessons_completed: completedCount,
+      lessons_total: requiredLessons.length,
+      progress_percentage: requiredLessons.length ? Math.round((completedCount / requiredLessons.length) * 100) : 0,
+      moduleProgress,
+      certificate: certByCourse.get(enrollment.course_id) ?? null,
+    };
+  });
+
+  return {
+    profile: profile as { id: string; full_name: string | null; role: string } | null,
+    courseDetails,
+    quizAttempts: attempts ?? [],
+  };
+}
+
 export async function listCertificates() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.from("certificates").select("id, certificate_number, course_id, issued_at").order("issued_at", { ascending: false });

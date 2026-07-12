@@ -278,6 +278,51 @@ export async function getPreviousAttempt(quizId: string) {
   return (data ?? [])[0] ?? null;
 }
 
+export type Quiz = { id: string; course_id: string; module_id: string | null; title: string; pass_percentage: number; sort_order: number };
+export type Question = { id: string; quiz_id: string; prompt: string; explanation: string | null; correct_choice_id: string | null; sort_order: number };
+export type Choice = { id: string; question_id: string; choice_text: string; sort_order: number };
+
+export async function listQuizzes(courseId: string): Promise<Quiz[]> {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("quizzes")
+    .select("id, course_id, module_id, title, pass_percentage, sort_order")
+    .eq("course_id", courseId)
+    .order("sort_order");
+  if (error) throw new Error(error.message);
+  return (data ?? []) as Quiz[];
+}
+
+export async function getQuizWithQuestions(quizId: string) {
+  const supabase = await createSupabaseServerClient();
+  const [{ data: quiz, error: quizError }, { data: questions, error: qError }] = await Promise.all([
+    supabase.from("quizzes").select("id, course_id, module_id, title, pass_percentage, sort_order").eq("id", quizId).maybeSingle(),
+    supabase.from("questions").select("id, quiz_id, prompt, explanation, correct_choice_id, sort_order").eq("quiz_id", quizId).order("sort_order"),
+  ]);
+  if (quizError) throw new Error(quizError.message);
+  if (qError) throw new Error(qError.message);
+  if (!quiz) return null;
+
+  const questionIds = (questions ?? []).map((q) => q.id);
+  const { data: choices } = questionIds.length
+    ? await supabase.from("question_choices").select("id, question_id, choice_text, sort_order").in("question_id", questionIds).order("sort_order")
+    : { data: [] };
+
+  const choicesByQuestion = new Map<string, Choice[]>();
+  for (const c of choices ?? []) {
+    if (!choicesByQuestion.has(c.question_id)) choicesByQuestion.set(c.question_id, []);
+    choicesByQuestion.get(c.question_id)!.push(c as Choice);
+  }
+
+  return {
+    quiz: quiz as Quiz,
+    questions: (questions ?? []).map((q) => ({
+      ...(q as Question),
+      choices: choicesByQuestion.get(q.id) ?? [],
+    })),
+  };
+}
+
 export async function getLearnerDetail(userId: string) {
   const supabase = await createSupabaseServerClient();
 

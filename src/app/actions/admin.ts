@@ -110,6 +110,74 @@ export async function assignCourseToAudienceGroup(_previousState: CourseActionSt
   return { success: true };
 }
 
+export async function createQuiz(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const courseId = String(formData.get("courseId") ?? "");
+  const title = String(formData.get("title") ?? "").trim();
+  const passPercentage = Number(formData.get("pass_percentage") ?? 80);
+  if (!courseId || !title) return { error: "Quiz title is required." };
+  if (passPercentage < 1 || passPercentage > 100) return { error: "Pass mark must be between 1 and 100." };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("quizzes").insert({ course_id: courseId, title, pass_percentage: passPercentage, sort_order: 0 });
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}`);
+  return { success: true };
+}
+
+export type QuizItemState = { error?: string; success?: boolean; questionId?: string };
+
+export async function createQuestion(_prev: QuizItemState, formData: FormData): Promise<QuizItemState> {
+  const quizId = String(formData.get("quizId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  const prompt = String(formData.get("prompt") ?? "").trim();
+  const explanation = String(formData.get("explanation") ?? "").trim();
+  if (!quizId || !prompt) return { error: "Question prompt is required." };
+  const supabase = await createSupabaseServerClient();
+  const { data: existing } = await supabase.from("questions").select("id").eq("quiz_id", quizId).order("sort_order", { ascending: false }).limit(1);
+  const nextOrder = ((existing ?? [])[0] as { id: string } | undefined) ? 0 : 0;
+  const { data, error } = await supabase
+    .from("questions")
+    .insert({ quiz_id: quizId, prompt, explanation: explanation || null, sort_order: nextOrder })
+    .select("id")
+    .maybeSingle();
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}/quizzes/${quizId}`);
+  return { success: true, questionId: (data as { id: string } | null)?.id };
+}
+
+export async function createChoice(_prev: QuizItemState, formData: FormData): Promise<QuizItemState> {
+  const questionId = String(formData.get("questionId") ?? "");
+  const quizId = String(formData.get("quizId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  const choiceText = String(formData.get("choice_text") ?? "").trim();
+  const isCorrect = formData.get("is_correct") === "true";
+  if (!questionId || !choiceText) return { error: "Choice text is required." };
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("question_choices")
+    .insert({ question_id: questionId, choice_text: choiceText, sort_order: 0 })
+    .select("id")
+    .maybeSingle();
+  if (error) return { error: error.message };
+  if (isCorrect && data) {
+    await supabase.from("questions").update({ correct_choice_id: (data as { id: string }).id }).eq("id", questionId);
+  }
+  revalidatePath(`/admin/courses/${courseId}/quizzes/${quizId}`);
+  return { success: true };
+}
+
+export async function setCorrectChoice(_prev: QuizItemState, formData: FormData): Promise<QuizItemState> {
+  const questionId = String(formData.get("questionId") ?? "");
+  const choiceId = String(formData.get("choiceId") ?? "");
+  const quizId = String(formData.get("quizId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  if (!questionId || !choiceId) return { error: "Question and choice are required." };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("questions").update({ correct_choice_id: choiceId }).eq("id", questionId);
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}/quizzes/${quizId}`);
+  return { success: true };
+}
+
 export async function updateCourseStatus(_previousState: CourseActionState, formData: FormData): Promise<CourseActionState> {
   const courseId = String(formData.get("courseId") ?? "");
   const status = String(formData.get("status") ?? "");

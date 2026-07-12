@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCourse, listAudienceGroups, listLessons, listModules, listTrainingProfiles } from "@/lib/training/courses";
+import { getCourse, listAudienceGroups, listLessons, listModules, listQuizzes, listTrainingProfiles } from "@/lib/training/courses";
 import { requireTrainingStaff } from "@/lib/training/auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import ModuleCreateForm from "@/app/admin/ModuleCreateForm";
@@ -8,6 +8,7 @@ import LessonCreateForm from "@/app/admin/LessonCreateForm";
 import EnrollmentForm from "@/app/admin/EnrollmentForm";
 import BulkEnrollmentForm from "@/app/admin/BulkEnrollmentForm";
 import CourseStatusForm from "@/app/admin/CourseStatusForm";
+import QuizCreateForm from "@/app/admin/QuizCreateForm";
 import { formatDeadline, getDeadlineStatus, deadlineColors } from "@/lib/training/deadlines";
 
 export default async function AdminCoursePage({ params }: { params: Promise<{ courseId: string }> }) {
@@ -19,6 +20,7 @@ export default async function AdminCoursePage({ params }: { params: Promise<{ co
     listTrainingProfiles(),
     listAudienceGroups(),
   ]);
+  const quizzes = course ? await listQuizzes(courseId) : [];
   if (!course) notFound();
 
   const modulesWithLessons = await Promise.all(
@@ -80,6 +82,39 @@ export default async function AdminCoursePage({ params }: { params: Promise<{ co
         <div className="mt-8 border-t border-[#d5e9ed] pt-6">
           <h3 className="font-semibold text-[#002f65]">Add module</h3>
           <ModuleCreateForm courseId={course.id} />
+        </div>
+      </section>
+
+      {/* Quizzes */}
+      <section className="mt-6 rounded-2xl bg-white p-6 ring-1 ring-[#d5e9ed]">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-semibold text-[#002f65]">Assessments</h2>
+          <span className="text-sm text-[#526b78]">{quizzes.length} quiz{quizzes.length !== 1 ? "zes" : ""}</span>
+        </div>
+
+        {quizzes.length > 0 && (
+          <div className="mt-5 space-y-3">
+            {quizzes.map((quiz) => (
+              <div key={quiz.id} className="flex items-center justify-between rounded-xl border border-[#d5e9ed] p-4">
+                <div>
+                  <p className="font-semibold text-[#002f65]">{quiz.title}</p>
+                  <p className="mt-0.5 text-xs text-[#526b78]">Pass mark: {quiz.pass_percentage}%</p>
+                </div>
+                <Link
+                  href={`/admin/courses/${courseId}/quizzes/${quiz.id}`}
+                  className="rounded-xl bg-[#edf7f8] px-4 py-2 text-sm font-semibold text-[#007c8b] transition hover:bg-[#d9f2f4]"
+                >
+                  Manage →
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className={`${quizzes.length > 0 ? "mt-6 border-t border-[#d5e9ed] pt-6" : "mt-4"}`}>
+          <h3 className="font-semibold text-[#002f65]">Create quiz</h3>
+          <p className="mt-1 text-sm text-[#526b78]">Create an assessment, then add questions and answer choices inside it.</p>
+          <QuizCreateForm courseId={course.id} />
         </div>
       </section>
 

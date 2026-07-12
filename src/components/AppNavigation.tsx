@@ -115,7 +115,15 @@ export function AppNavigation() {
                   <span className="max-w-[120px] truncate">{name}</span>
                 </button>
                 {userMenuOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-44 rounded-2xl bg-white py-2 shadow-lg ring-1 ring-[#d5e9ed]">
+                  <div className="absolute right-0 top-full mt-2 w-48 rounded-2xl bg-white py-2 shadow-lg ring-1 ring-[#d5e9ed]">
+                    <Link
+                      href="/profile"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="block px-4 py-2.5 text-sm font-medium text-[#002f65] hover:bg-[#f6feff]"
+                    >
+                      My profile
+                    </Link>
+                    <div className="my-1 border-t border-[#edf4f5]" />
                     <button
                       onClick={() => { setUserMenuOpen(false); signOut(); }}
                       className="w-full px-4 py-2.5 text-left text-sm font-medium text-[#9d2c25] hover:bg-[#fff8f7]"
@@ -171,12 +179,19 @@ export function AppNavigation() {
             <div className="mt-3 border-t border-[#edf2f3] pt-3 space-y-2">
               {loaded && name ? (
                 <>
-                  <div className="flex items-center gap-3 rounded-xl bg-[#f6feff] px-4 py-3">
+                  <Link
+                    href="/profile"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-xl bg-[#f6feff] px-4 py-3"
+                  >
                     <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#002f65] text-sm font-bold text-white">
                       {initials(name)}
                     </span>
-                    <span className="text-sm font-semibold text-[#002f65]">{name}</span>
-                  </div>
+                    <div>
+                      <span className="block text-sm font-semibold text-[#002f65]">{name}</span>
+                      <span className="text-xs text-[#007c8b]">My profile →</span>
+                    </div>
+                  </Link>
                   <button
                     onClick={() => { setOpen(false); signOut(); }}
                     className="w-full rounded-xl border border-[#f5c6c0] px-4 py-3 text-center text-sm font-semibold text-[#9d2c25] hover:bg-[#fff8f7]"

@@ -6,11 +6,153 @@ import type { QuizItem } from "@/lib/training/quizzes";
 
 const initialState: QuizState = {};
 
-export default function QuizForm({ quizId, items }: { quizId: string; items: QuizItem[] }) {
+export default function QuizForm({
+  quizId,
+  items,
+  passPercentage,
+  returnHref,
+}: {
+  quizId: string;
+  items: QuizItem[];
+  passPercentage: number;
+  returnHref: string;
+}) {
   const [state, formAction, pending] = useActionState(submitQuiz, initialState);
   const [answered, setAnswered] = useState<string[]>([]);
   const questions = Array.from(new Map(items.map((item) => [item.question_id, item])).values());
-  const progress = Math.round((answered.length / questions.length) * 100);
+  const progress = answered.length === 0 ? 0 : Math.round((answered.length / questions.length) * 100);
+  const allAnswered = answered.length === questions.length;
 
-  return <form action={formAction} className="mt-8 flex flex-col gap-5"><input type="hidden" name="quizId" value={quizId} /><input type="hidden" name="answers" id="answers" value="[]" /><div className="rounded-2xl bg-[#edf7f8] p-5" aria-label={`Quiz progress: ${answered.length} of ${questions.length} answered`}><div className="flex justify-between text-sm font-medium text-[#526b78]"><span>{answered.length} of {questions.length} answered</span><span>{progress}%</span></div><div className="mt-3 h-2 rounded-full bg-white"><div className="h-2 rounded-full bg-[#007c8b] transition-all" style={{ width: `${progress}%` }} /></div></div><div className="flex flex-col gap-5">{questions.map((question, questionIndex) => { const choices = items.filter((item) => item.question_id === question.question_id); return <fieldset key={question.question_id} className="rounded-2xl bg-white p-6 ring-1 ring-[#d5e9ed]"><legend className="font-semibold text-[#002f65]"><span className="mr-2 text-sm text-[#007c8b]">{questionIndex + 1}.</span>{question.prompt}</legend><div className="mt-4 flex flex-col gap-3">{choices.map((choice) => <label key={choice.choice_id} className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#d5e9ed] p-3 text-sm text-[#526b78] transition hover:border-[#007c8b] has-[:checked]:border-[#007c8b] has-[:checked]:bg-[#edf7f8]"><input type="radio" name={`question-${question.question_id}`} value={choice.choice_id} onChange={() => { const hidden = document.getElementById("answers") as HTMLInputElement; const current = JSON.parse(hidden.value) as Array<{ question_id: string; choice_id: string }>; hidden.value = JSON.stringify([...current.filter((answer) => answer.question_id !== question.question_id), { question_id: question.question_id, choice_id: choice.choice_id }]); setAnswered((currentAnswered) => currentAnswered.includes(question.question_id) ? currentAnswered : [...currentAnswered, question.question_id]); }} required />{choice.choice_text}</label>)}</div></fieldset>; })}</div><button disabled={pending} className="rounded-xl bg-[#002f65] px-6 py-3 font-semibold text-white transition hover:bg-[#001f43] disabled:opacity-60">{pending ? "Submitting…" : "Submit assessment"}</button>{state.error && <p className="text-sm text-red-700" role="alert">{state.error}</p>}{state.result && <div className={`rounded-2xl p-5 ${state.result.passed ? "bg-[#e4f7ec] text-[#145c36]" : "bg-[#fff0ef] text-[#9d2c25]"}`} role="status"><p className="font-semibold">{state.result.passed ? "Assessment passed" : "Assessment not passed"}</p><p className="mt-1 text-sm">Score: {state.result.score_percentage}%</p>{state.result.certificate_id && <a className="mt-3 inline-block font-semibold underline" href={`/certificates/${state.result.certificate_id}`}>View certificate</a>}</div>}</form>;
+  if (state.result) {
+    const { passed, score_percentage, certificate_id } = state.result;
+    return (
+      <div className="mt-8 space-y-5">
+        <div className={`rounded-2xl p-8 ${passed ? "bg-[#e4f7ec]" : "bg-[#fff0ef]"}`}>
+          <p className={`text-xs font-semibold uppercase tracking-[0.2em] ${passed ? "text-[#145c36]" : "text-[#9d2c25]"}`}>
+            {passed ? "Assessment passed" : "Assessment not passed"}
+          </p>
+          <p className={`mt-3 text-5xl font-semibold ${passed ? "text-[#145c36]" : "text-[#9d2c25]"}`}>{score_percentage}%</p>
+          <p className={`mt-2 text-sm ${passed ? "text-[#1a7040]" : "text-[#b03020]"}`}>
+            {passed
+              ? `Well done — you met the ${passPercentage}% pass mark.`
+              : `You need ${passPercentage}% to pass. Review the material and try again.`}
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-3 sm:flex-row">
+          {certificate_id && (
+            <a
+              href={`/certificates/${certificate_id}`}
+              className="flex-1 rounded-xl bg-[#002f65] px-6 py-3 text-center font-semibold text-white transition hover:bg-[#001f43]"
+            >
+              View certificate →
+            </a>
+          )}
+          <a
+            href={returnHref}
+            className="flex-1 rounded-xl bg-white px-6 py-3 text-center font-semibold text-[#002f65] ring-1 ring-[#d5e9ed] transition hover:ring-[#007c8b]"
+          >
+            {passed ? "Back to module" : "Review lessons"}
+          </a>
+          {!passed && (
+            <button
+              onClick={() => window.location.reload()}
+              className="flex-1 rounded-xl bg-[#007c8b] px-6 py-3 text-center font-semibold text-white transition hover:bg-[#006b78]"
+            >
+              Retry assessment
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <form action={formAction} className="mt-8 flex flex-col gap-5">
+      <input type="hidden" name="quizId" value={quizId} />
+      <input type="hidden" name="answers" id="answers" value="[]" />
+
+      {/* Progress bar */}
+      <div
+        className="rounded-2xl bg-[#edf7f8] p-5"
+        aria-label={`Quiz progress: ${answered.length} of ${questions.length} answered`}
+      >
+        <div className="flex justify-between text-sm font-medium text-[#526b78]">
+          <span>{answered.length} of {questions.length} answered</span>
+          <span>{progress}%</span>
+        </div>
+        <div className="mt-3 h-2 rounded-full bg-white">
+          <div className="h-2 rounded-full bg-[#007c8b] transition-all" style={{ width: `${progress}%` }} />
+        </div>
+        {allAnswered && (
+          <p className="mt-3 text-sm font-medium text-[#007c8b]">All questions answered — ready to submit.</p>
+        )}
+      </div>
+
+      {/* Questions */}
+      <div className="flex flex-col gap-5">
+        {questions.map((question, questionIndex) => {
+          const choices = items.filter((item) => item.question_id === question.question_id);
+          const isAnswered = answered.includes(question.question_id);
+          return (
+            <fieldset
+              key={question.question_id}
+              className={`rounded-2xl p-6 transition ${isAnswered ? "bg-white ring-1 ring-[#a8dfc0]" : "bg-white ring-1 ring-[#d5e9ed]"}`}
+            >
+              <legend className="font-semibold text-[#002f65]">
+                <span className="mr-2 text-sm text-[#007c8b]">{questionIndex + 1}.</span>
+                {question.prompt}
+              </legend>
+              <div className="mt-4 flex flex-col gap-2">
+                {choices.map((choice) => (
+                  <label
+                    key={choice.choice_id}
+                    className="flex cursor-pointer items-center gap-3 rounded-xl border border-[#d5e9ed] p-3.5 text-sm text-[#526b78] transition hover:border-[#007c8b] has-[:checked]:border-[#007c8b] has-[:checked]:bg-[#edf7f8] has-[:checked]:text-[#002f65]"
+                  >
+                    <input
+                      type="radio"
+                      name={`question-${question.question_id}`}
+                      value={choice.choice_id}
+                      className="accent-[#007c8b]"
+                      onChange={() => {
+                        const hidden = document.getElementById("answers") as HTMLInputElement;
+                        const current = JSON.parse(hidden.value) as Array<{ question_id: string; choice_id: string }>;
+                        hidden.value = JSON.stringify([
+                          ...current.filter((a) => a.question_id !== question.question_id),
+                          { question_id: question.question_id, choice_id: choice.choice_id },
+                        ]);
+                        setAnswered((prev) =>
+                          prev.includes(question.question_id) ? prev : [...prev, question.question_id],
+                        );
+                      }}
+                    />
+                    {choice.choice_text}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          );
+        })}
+      </div>
+
+      {state.error && (
+        <p className="rounded-xl bg-[#fff0ef] px-4 py-3 text-sm text-red-700" role="alert">{state.error}</p>
+      )}
+
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <a
+          href={returnHref}
+          className="rounded-xl bg-white px-6 py-3 text-center font-semibold text-[#526b78] ring-1 ring-[#d5e9ed] transition hover:ring-[#007c8b]"
+        >
+          ← Back to module
+        </a>
+        <button
+          disabled={pending || !allAnswered}
+          className="flex-1 rounded-xl bg-[#002f65] px-6 py-3 font-semibold text-white transition hover:bg-[#001f43] disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {pending ? "Submitting…" : `Submit assessment (${answered.length}/${questions.length} answered)`}
+        </button>
+      </div>
+    </form>
+  );
 }

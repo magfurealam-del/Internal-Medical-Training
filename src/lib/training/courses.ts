@@ -191,6 +191,61 @@ export async function getCourseProgress(courseId: string) {
   return { completed, total, percentage: total === 0 ? 0 : Math.round((completed / total) * 100) };
 }
 
+export async function getNextLesson(courseId: string): Promise<{ lesson: Lesson; module: Module } | null> {
+  const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+  if (!userId) return null;
+
+  const [{ data: modules }, { data: progress }] = await Promise.all([
+    supabase.from("modules").select("id, course_id, title, description, sort_order").eq("course_id", courseId).order("sort_order"),
+    supabase.from("lesson_progress").select("lesson_id").eq("user_id", userId).not("completed_at", "is", null),
+  ]);
+
+  const completedIds = new Set((progress ?? []).map((p) => p.lesson_id));
+  for (const mod of modules ?? []) {
+    const { data: lessons } = await supabase.from("lessons").select("id, module_id, title, slug, content_path, sort_order, is_required").eq("module_id", mod.id).order("sort_order");
+    const next = (lessons ?? []).find((l) => !completedIds.has(l.id));
+    if (next) return { lesson: next as Lesson, module: mod as Module };
+  }
+  return null;
+}
+
+export async function getModuleProgress(moduleId: string) {
+  const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+  if (!userId) return { completed: 0, total: 0 };
+
+  const [{ data: lessons }, { data: progress }] = await Promise.all([
+    supabase.from("lessons").select("id").eq("module_id", moduleId).eq("is_required", true),
+    supabase.from("lesson_progress").select("lesson_id").eq("user_id", userId).not("completed_at", "is", null),
+  ]);
+
+  const ids = new Set((lessons ?? []).map((l) => l.id));
+  const completed = (progress ?? []).filter((p) => ids.has(p.lesson_id)).length;
+  return { completed, total: ids.size };
+}
+
+export async function getCompletedLessonIds(lessonIds: string[]): Promise<Set<string>> {
+  if (!lessonIds.length) return new Set();
+  const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+  if (!userId) return new Set();
+  const { data } = await supabase.from("lesson_progress").select("lesson_id").eq("user_id", userId).in("lesson_id", lessonIds).not("completed_at", "is", null);
+  return new Set((data ?? []).map((p) => p.lesson_id));
+}
+
+export async function getPreviousAttempt(quizId: string) {
+  const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+  if (!userId) return null;
+  const { data } = await supabase.from("attempts").select("score_percentage, passed, submitted_at").eq("quiz_id", quizId).eq("user_id", userId).order("submitted_at", { ascending: false }).limit(1);
+  return (data ?? [])[0] ?? null;
+}
+
 export async function listCertificates() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.from("certificates").select("id, certificate_number, course_id, issued_at").order("issued_at", { ascending: false });

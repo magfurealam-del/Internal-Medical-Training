@@ -1,40 +1,39 @@
-# Lesson 3: When a Wound Stalls
+# Module 1 — The Dermis: Strength, Elasticity, and Repair Infrastructure
 
-**Source:** Module 1, Pages 11–16 and 35–134.
+**Vault source:** Course 1, Theoretical Module 1, Slides 4 and “Layers of the Dermis”  
+**Primary mechanism:** dermal structure determines tissue strength, elasticity, vascular supply, sensation, and the capacity to generate repair tissue.
 
-“Not healing” is a signal to investigate, not a sufficient diagnosis. Module 1 presents interacting barriers including poor perfusion, local hypoxia, biofilm or recurrent slough, infection/inflammatory burden, pressure or shear, edema/venous/lymphatic failure, neuropathy, moisture imbalance, necrosis, and wound-edge failure.
+## The dermis is more than “the layer below”
 
-## Finding versus barrier
+The dermis contains connective tissue, collagen, elastin, blood vessels, lymphatic channels, nerves, hair follicles, sebaceous glands, and sweat glands. It is the support layer that gives skin much of its mechanical resilience and connects the external barrier to the body’s circulation, immune system, and sensory system.
 
-| Finding | Possible mechanism to investigate |
-|---|---|
-| Weak pulses or concerning perfusion clues | Poor arterial inflow/perfusion |
-| Stalled progress despite a clean appearance | Unresolved barrier; local or systemic cause |
-| Recurrent slough | Biofilm/recurrent tissue-bed barrier or another process |
-| Repeated loading or friction | Pressure, shear, or repetitive trauma |
-| Edema and wet periwound | Edema/venous/lymphatic and moisture barriers |
-| Reduced protective sensation | Neuropathy and injury recurrence risk |
-| Non-viable tissue | Necrosis/eschar/tissue-bed barrier |
-| Rolled or non-advancing edge | Edge failure, callus, undermining, or non-advancement |
+It is useful to distinguish the **papillary dermis**, which is more superficial and closely related to the epidermal junction, from the **reticular dermis**, which contains denser connective tissue and contributes substantially to strength.
 
-These are assessment hypotheses, not automatic diagnoses.
+## Collagen and elastin as a mechanical system
+
+Collagen resists tension. Elastin allows controlled recoil. Their arrangement matters as much as their presence. Stretching, aging, inflammation, enzyme activity, edema, and repeated trauma can alter the balance between matrix production and matrix breakdown.
+
+When the dermal matrix is disrupted, the wound loses structural continuity. Repair requires inflammation to clear damaged material, fibroblast activity to produce new matrix, angiogenesis to support the repair field, and remodeling to reorganize collagen. A wound can look superficially clean while its deeper mechanical strength remains poor.
+
+## Vessels, nerves, and glands are clinical clues
+
+Dermal vessels support temperature regulation and tissue metabolism. Nerves provide pain and touch information that help a person protect the area. Glands contribute to the surface environment. Hair follicles and other appendages can provide epithelial cell sources in some superficial injuries, whereas deeper destruction removes these local resources.
+
+### Clinical interpretation
+
+- Severe pain may indicate tissue injury, inflammation, pressure, or ischemia—but pain intensity can be misleading when sensation is impaired.
+- Reduced warmth or color change may reflect altered perfusion.
+- Loss of sensation changes how the patient experiences mechanical injury.
+- Edema increases diffusion distance and can alter the dermal environment.
 
 ### Doctor checkpoint
 
-Identify the dominant barrier to clarify and what clinical assessment or communication is required under local governance.
+Ask which dermal function is failing: strength, elasticity, perfusion, sensation, immune access, or appendage-supported re-epithelialization.
 
 ### Nurse checkpoint
 
-Compare current findings with baseline, record meaningful change, and communicate persistent or worsening barriers.
+Compare temperature, color, edema, pain, sensation, and skin response with the patient’s baseline and the opposite limb when appropriate.
 
-## Barrier investigation sequence
+## Take-home rule
 
-1. Describe the finding precisely.
-2. Identify one or more plausible mechanisms.
-3. Look for supporting and conflicting evidence.
-4. Identify the highest-value missing assessment.
-5. Document the uncertainty and plan.
-
-## Case prompt
-
-A wound is clean but has not progressed after several weeks. Do not conclude that the wound is “inherently chronic.” Reassess patient and wound barriers, compare with baseline, document evidence and uncertainty, and define monitoring.
+The dermis is the repair infrastructure. A wound cannot be understood by surface appearance alone if the dermal matrix, vessels, nerves, or appendages are compromised.

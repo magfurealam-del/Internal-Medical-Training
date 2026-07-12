@@ -1,29 +1,36 @@
-# Lesson 5: VIP, TIME, and MOIST
+# Module 1 — Skin Functions and the Wound Environment
 
-**Source:** Module 1, Pages 23–31. Detailed framework teaching continues in Course 1, Module 7.
+**Vault source:** Course 1, Theoretical Module 1, Slide 6  
+**Primary mechanism:** skin functions operate as an integrated system; losing one function can destabilize several others.
 
-> Clinical-owner review required: confirm the approved expansions and exact operating sequence of VIP, TIME, and MOIST before publication. This lesson teaches their role as structured reasoning tools without inventing acronym definitions.
+## Major functions
 
-## Frameworks are decision tools
+The vault module teaches skin as a structure for protection, temperature regulation, sensation, immune defense, prevention of fluid loss, and interaction with the external environment.
 
-A framework is useful when it produces a clearer assessment and action. Recording an acronym without findings or consequences does not demonstrate reasoning.
+### Barrier and fluid control
 
-### VIP
+The outer surface limits water loss and blocks external irritants and microorganisms. When barrier function fails, the wound environment may become too dry, too wet, chemically irritated, or easily traumatized.
 
-Use VIP as the source-defined structured screen for the initial clinical question. Record the relevant findings in the approved order, then connect them to assessment and monitoring.
+### Temperature regulation
 
-### TIME
+Vessels change their caliber and sweat glands influence heat loss. Local temperature differences can therefore provide clues about perfusion, inflammation, infection, or systemic context—but temperature alone never establishes the diagnosis.
 
-Use TIME to organize wound-bed reasoning. Describe the applicable wound-bed findings, interpret their significance, document the resulting action, and monitor response.
+### Sensation and protection
 
-### MOIST
+Pain, touch, pressure, and temperature sensation allow the patient to withdraw from injury. Loss of sensation removes an early warning system. The patient may continue walking on a hot, tight, sharp, or high-pressure area until tissue damage is advanced.
 
-Use MOIST to structure reasoning about the wound environment and moisture-related findings. Record what is observed, what it may mean, and what will be monitored.
+### Immune surveillance
 
-## Shared application rule
+The skin is not sterile and does not need to be sterile to be healthy. It maintains a controlled interface with microorganisms. Barrier disruption changes access, local nutrients, moisture, and inflammatory signaling, which can alter the balance between colonization, inflammation, and clinically important infection.
 
-Use the framework that answers the clinical question. Frameworks complement the mechanism-first sequence; they do not replace patient assessment, safety screening, or clinical judgement.
+### Doctor checkpoint
 
-## Documentation checkpoint
+When a function is lost, predict the secondary consequence. For example, sensory loss predicts repetitive trauma; barrier loss predicts fluid loss and microbial access; perfusion change predicts impaired oxygen delivery and immune function.
 
-Record the framework used, the relevant findings, the interpretation, and the action/monitoring consequence.
+### Nurse checkpoint
+
+Use function-based observation: protection, sensation, moisture, temperature, color, and tolerance. Document the patient’s ability to recognize and protect the area.
+
+## Take-home rule
+
+Wound care is often the restoration or compensation of lost skin functions, not simply coverage of a hole.

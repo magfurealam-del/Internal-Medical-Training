@@ -1,51 +1,44 @@
-# Module 1: Mechanism-Based Wound Care System
+# Module 1 — Skin as a Living Barrier System
 
-## Welcome
+**Vault source:** Course 1, Theoretical Module 1, Slides 1–8  
+**Primary mechanism:** intact skin prevents tissue injury and controls the transition from external exposure to internal inflammation.
 
-This module establishes the shared clinical reasoning system used throughout Ekagra training. The central rule is:
+![Cross-section of human skin showing epidermis, dermis, and subcutaneous tissue](https://commons.wikimedia.org/wiki/Special:FilePath/Anatomy_of_the_skin.jpg)
 
-> Identify the biological problem before selecting the product, device, or pathway.
+*Image source: Wikimedia Commons, “Anatomy of the skin,” based on StemBook Figure 1. Review attribution and license before production reuse.*
 
-The source sequence is: **finding → mechanism → required assessment → therapy/pathway match → contraindications/cautions → monitoring → documentation**.
+## Why clinicians need anatomy
 
-### Learning outcomes
+Skin anatomy is not an introductory vocabulary exercise. It predicts what kind of injury is possible, what function has been lost, how deep a wound may be, what tissue is available for repair, and which barriers can prevent closure.
 
-By the end of this module you should be able to:
+The skin is an organ made of coordinated tissues. The epidermis provides the external barrier. The dermis provides much of the tensile strength, elasticity, vascular support, sensory network, and appendage structure. The subcutaneous layer provides cushioning, insulation, energy storage, and a transition to deeper fascia and muscle.
 
-- explain why mechanism comes before product;
-- identify likely healing barriers in a stalled wound;
-- use a structured assessment sequence;
-- distinguish observation from interpretation and assumption; and
-- document a baseline that another clinician can audit and compare.
+When a wound crosses these layers, the clinical problem changes. A superficial barrier defect mainly threatens fluid balance and microbial exclusion. A deeper defect can expose or damage vessels, nerves, tendons, fascia, muscle, or bone and can remove the local structures needed for epithelial migration and repair.
 
-**Source:** Module 1, Pages 5–10 and 289–299.
+## The mechanism chain
 
-## Why this matters
+```text
+Layer or structure injured → function lost → biological consequence → clinical finding → assessment priority
+```
 
-The same visible feature can arise from different biological problems. “Dirty,” “chronic,” “wet,” or “not healing” are not complete clinical explanations. The team must clarify what is present, what may be causing it, what evidence is available, and what must be assessed next.
+Examples:
+
+- Barrier disruption → increased water loss and microbial access → inflammation and maceration risk → erythema, fissure, drainage → inspect skin and periwound.
+- Dermal injury → loss of collagen scaffold and vessels → weaker tissue and impaired repair → depth, slough, delayed granulation → document depth/tissue and assess perfusion.
+- Sensory-nerve injury → reduced protective feedback → repetitive unnoticed trauma → callus, blister, plantar ulcer → assess sensation, gait, footwear, and loading.
+
+## Shared clinical language
+
+Do not describe a wound only as “deep” or “bad.” Describe the anatomical structures and functions involved when known, and clearly label what is suspected or uncertain.
 
 ### Doctor checkpoint
 
-Define the clinical question, interpret the likely mechanism, identify missing information, and avoid committing to a therapy before mechanism and safety are clear.
+Use anatomy to frame differential mechanism: barrier failure, structural tissue loss, perfusion risk, sensory loss, mechanical loading, or a combination.
 
 ### Nurse checkpoint
 
-Describe findings consistently, compare them with baseline, communicate change or deterioration, monitor response, and document the reasoning chain.
+Observe and document skin integrity, color, temperature, moisture, tissue appearance, periwound changes, pain/sensation, and trajectory in comparable terms.
 
-## The mechanism-first sequence
+## Take-home rule
 
-1. **Finding:** What was seen, measured, reported, or changed?
-2. **Mechanism:** What biological or mechanical process could explain it?
-3. **Assessment:** What information is needed to support or reject that explanation?
-4. **Match:** Which source-supported therapy or pathway addresses the established problem?
-5. **Cautions:** What contraindications, limits, or referral concerns apply?
-6. **Monitor:** What response or deterioration will be tracked?
-7. **Document:** Can another clinician understand what happened and why?
-
-## Boundary of this module
-
-This is a reasoning foundation. It does not replace formal screening, device instructions for use, local scope, specialist referral, or clinical governance. Detailed cleansing, debridement, dressing selection, condition-specific escalation, diagnostics, devices, and recurrence prevention are taught later.
-
-## Reflection
-
-Before continuing, write down one example of a wound description that is only an appearance label. What additional mechanism and assessment questions would make it clinically useful?
+The layer involved is not just a description of the wound. It is evidence about which biological functions have been lost.

@@ -1,33 +1,32 @@
-# Lesson 4: Healing Potential and Standard Care
+# Module 1 — Subcutaneous Tissue: Cushion, Energy, and Pressure Transmission
 
-**Source:** Module 1, Pages 14–22.
+**Vault source:** Course 1, Theoretical Module 1, Slide 5  
+**Primary mechanism:** subcutaneous tissue changes how external force reaches deeper tissues and how the body insulates, stores energy, and protects structures.
 
-Healing potential is influenced by interacting patient and wound factors. The source presents a “Healing Potential Equation”; in this first implementation it is taught as a conceptual reasoning model, not a numerical calculation, pending clinical-owner confirmation.
+## What the subcutaneous layer does
 
-## Questions to ask
+The subcutaneous layer contains adipose and connective tissue. It provides cushioning, insulation, energy storage, and a mobile interface between the skin and deeper fascia. Its thickness and distribution vary by body site, age, body composition, disease, and previous injury.
 
-- What patient factors may reduce healing potential?
-- What wound factors may maintain the barrier?
-- What foundational care is required?
-- Is an adjunct being considered because a defined barrier exists?
-- What safety checks and monitoring are required?
+## Why cushioning can fail
 
-## Standard care and adjunctive care
+Cushioning is not the same as immunity from pressure injury. Sustained pressure can compress vessels, reduce local oxygen delivery, deform tissue, and create shear between layers. Repetitive loading can damage tissue even when the skin surface initially appears intact.
 
-Standard care is not care that can be skipped once an advanced therapy is available. It is the foundation on which targeted adjunctive care is considered. An adjunct should have a defined target barrier and a monitoring plan.
+Loss of subcutaneous tissue can bring skin closer to bone or tendon and concentrate force over a smaller area. Edema can increase tissue pressure and diffusion distance. Scar tissue can have different elasticity and load distribution from uninjured skin.
+
+## Mechanism-to-finding examples
+
+- Thin or absent cushioning over a bony prominence → concentrated load → persistent erythema, blister, or ulcer risk.
+- Repeated shear between skin and deeper tissue → microvascular injury and separation → bruising, blistering, undermining, or delayed healing.
+- Edematous subcutaneous tissue → increased diffusion distance and altered interstitial pressure → fragile skin, exudate, and slower repair.
 
 ### Doctor checkpoint
 
-Integrate patient and wound factors into the clinical judgement and define the target barrier before considering adjunctive care.
+Identify whether the problem is external pressure, internal tissue pressure, shear, loss of padding, or a mixed mechanical/perfusion mechanism.
 
 ### Nurse checkpoint
 
-Capture modifiable risks, adherence, trajectory, tolerance, and monitoring findings within scope.
+Inspect pressure points, note positioning and mobility, assess edema and tissue texture, and report changes before superficial breakdown becomes extensive.
 
-## Documentation
+## Take-home rule
 
-Do not write only `poor healing`. Record relevant factors, what is known versus uncertain, what was addressed, and what will be reviewed.
-
-## Key takeaway
-
-Persistence alone does not prove that a device or advanced therapy is indicated. The mechanism and foundation must still be assessed.
+A skin lesion may be the visible endpoint of deeper mechanical injury. Always ask what force or pressure is acting below the surface.

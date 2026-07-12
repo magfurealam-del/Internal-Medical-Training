@@ -1,38 +1,51 @@
-# Lesson 2: Mechanism Before Product
+# Module 1 — The Epidermis: The External Defense System
 
-**Source:** Module 1, Pages 8–10.
+**Vault source:** Course 1, Theoretical Module 1, Slides 2–3  
+**Primary mechanism:** the epidermis limits water loss, blocks chemical and microbial exposure, and continually renews the surface.
 
-Product knowledge is useful only after the clinical problem is defined. A therapy must be linked to a target barrier, with contraindications and monitoring considered before use.
+![Diagram of epidermal layers](https://commons.wikimedia.org/wiki/Special:FilePath/Epidermal_layers.svg)
 
-## A practical reasoning test
+*Image source: Wikimedia Commons, “Epidermal layers.svg.” Verify the CC-BY-SA/GFDL attribution requirements before production reuse.*
 
-When someone asks, “Which Ekagra device should we use?”, pause and ask:
+## Architecture
 
-- What finding triggered the question?
-- What mechanism is suspected?
-- What evidence supports that mechanism?
-- What assessment is still missing?
-- What therapy is source-supported for that mechanism?
-- What safety checks and monitoring are required?
+The epidermis is a stratified keratinized squamous epithelium. It is designed to be renewed from below while the outer cells become progressively more specialized for barrier function.
 
-### Example
+The principal cell types in the vault teaching material are:
 
-A wound is described only as “chronic and dirty.” That description does not distinguish slough, necrotic tissue, moisture imbalance, biofilm, infection/inflammatory burden, or another barrier. The correct first action is clarification and assessment—not choosing the strongest or most familiar product.
+- **Keratinocytes:** the dominant cells; they produce keratin and form the physical barrier.
+- **Melanocytes:** produce melanin and contribute to pigment and ultraviolet protection.
+- **Langerhans cells:** participate in immune surveillance.
+- **Merkel cells:** contribute to touch sensation.
+
+## From basal renewal to surface shedding
+
+The deepest epidermal region contains proliferative cells that generate daughter keratinocytes. As cells migrate toward the surface, they change shape, accumulate keratin, develop stronger intercellular connections, lose organelles, and eventually form the outer cornified barrier. Surface shedding must be balanced by renewal.
+
+This gives clinicians a useful mechanism question: **Is the surface failing because it is being damaged faster than it can renew, because its water/lipid barrier is disturbed, or because deeper tissue has been injured?**
+
+## Why the barrier fails clinically
+
+Repeated washing, friction, shear, chemical exposure, maceration, dryness, edema, inflammation, and aging can disturb the surface. The consequence is not merely cosmetic. Barrier disruption increases transepidermal water loss, weakens mechanical resistance, changes the local environment, and makes entry of irritants and microorganisms easier.
+
+### What to look for
+
+- fissures and cracks;
+- scaling or excessive dryness;
+- maceration and whitening;
+- erythema or color change;
+- blistering or epidermal separation;
+- fragile areas that shear during dressing removal;
+- changes that are new compared with baseline.
 
 ### Doctor checkpoint
 
-State the target problem and the evidence for it before selecting therapy.
+Interpret epidermal findings in context. A red, wet, or darkened surface may reflect pressure, inflammation, moisture injury, perfusion change, trauma, or infection; the appearance alone does not identify the mechanism.
 
 ### Nurse checkpoint
 
-Record relevant wound, periwound, patient-response, and trajectory findings rather than only “dressing changed” or “device tolerated.”
+Record the exact location, distribution, surface condition, moisture state, and change over time. Avoid vague labels such as “skin poor.”
 
-## Documentation pattern
+## Take-home rule
 
-Avoid: `Started advanced therapy for chronic wound.`
-
-Use: `Finding and suspected barrier documented; assessment completed or pending; intervention linked to target barrier; monitoring plan recorded.`
-
-## Key takeaway
-
-If the team cannot state what biological problem the intervention is intended to address, the reasoning is incomplete.
+The epidermis is an active renewing barrier. Any factor that increases surface damage, water loss, or microbial access can become an upstream wound-healing problem.

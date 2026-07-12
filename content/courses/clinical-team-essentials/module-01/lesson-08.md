@@ -1,43 +1,54 @@
-# Lesson 8: Integrated Case and Documentation
+# Module 1 — Integrated Skin-Anatomy Case Conference
 
-**Source:** Module 1, Pages 270–292.
+**Vault source:** Course 1, Theoretical Module 1; Wound Care Course case-study and assessment materials  
+**Purpose:** integrate anatomy, physiology, mechanism, assessment, and documentation before moving to wound-healing biology.
 
-## The mechanism-first wound note
+## Case 1: plantar callus and loss of sensation
 
-Use this structure until reconciled with the approved Ekagra form:
+A patient with diabetes has a thick plantar callus over a metatarsal head and reports little pain. The patient continues walking in a worn shoe.
+
+### Reasoning
+
+The surface finding is callus. The mechanism may include repetitive pressure, altered biomechanics, loss of protective sensation, and footwear-related loading. Pain cannot be used as the safety signal if sensation is impaired. The assessment must include skin, callus, footwear, gait/loading, sensation, perfusion, and trajectory.
+
+## Case 2: fragile skin and adhesive injury
+
+An older patient develops a skin tear during dressing removal.
+
+### Reasoning
+
+The event is adhesive/shear trauma. The tissue vulnerability may include epidermal dryness, reduced dermal strength, thin subcutaneous cushioning, edema, medication effects, or repeated adhesive exposure. Prevention must address both handling technique and vulnerability.
+
+## Case 3: wet periwound around a shallow wound
+
+The wound surface is shallow, but the surrounding skin is white, soft, and increasingly painful.
+
+### Reasoning
+
+The wound depth alone does not explain the deterioration. Moisture imbalance may be damaging the epidermal barrier. Assess exudate, dressing performance, contact time, periwound integrity, infection/inflammation, and patient tolerance.
+
+## Required documentation
 
 ```text
-Date/time:
-Clinician/role:
-Location:
-Wound type/etiology: established / suspected / uncertain
-Key findings:
-Wound-bed and periwound findings:
-Patient/context factors:
-Trajectory from baseline:
-Suspected dominant barrier(s):
-Evidence supporting interpretation:
-Important unknowns:
-Assessment completed or required:
-Action/communication:
-Monitoring plan and review point:
+Location and cause/context:
+Skin layer or structure involved:
+Surface and periwound findings:
+Depth and tissue visible:
+Sensation and pain:
+Perfusion clues:
+Mechanical exposure/footwear/positioning:
+Patient factors:
+Dominant mechanism suspected:
+Missing information:
+Action and monitoring plan:
 ```
 
-## Integrated case
+## Module completion standard
 
-A sacral wound has slough, undermining, poor nutrition, and limited turning. The learner should identify interacting tissue-bed, patient, and mechanical barriers; document what is known and uncertain; identify the assessment and communication required; and define monitoring. The learner should not skip directly to a device or detailed debridement decision.
+The learner should be able to explain how skin structure produces clinical function, how function loss produces risk, and how to document the mechanism before selecting a dressing or device.
 
-## Completion standard
+## Image references
 
-You have completed this module when you can:
-
-- explain the mechanism-first sequence;
-- identify a plausible barrier in a stalled wound;
-- distinguish finding from interpretation;
-- explain the introductory role of VIP, TIME, and MOIST;
-- identify the doctor and nurse contributions; and
-- produce an auditable note linking finding, mechanism, assessment, action, and monitoring.
-
-## Final review
-
-Before taking the quiz, return to any lesson where you cannot explain why a product choice would be premature without mechanism evidence.
+- [Anatomy of the skin — Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Anatomy_of_the_skin.jpg)
+- [Epidermal layers — Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Epidermal_layers.svg)
+- [Skin anatomy — NCBI Bookshelf](https://www.ncbi.nlm.nih.gov/books/NBK441980/)

@@ -9,6 +9,8 @@ import EnrollmentForm from "@/app/admin/EnrollmentForm";
 import BulkEnrollmentForm from "@/app/admin/BulkEnrollmentForm";
 import CourseStatusForm from "@/app/admin/CourseStatusForm";
 import QuizCreateForm from "@/app/admin/QuizCreateForm";
+import { UpdateDeadlineForm, UnenrollButton } from "@/app/admin/EnrollmentRowActions";
+import { EditCourseForm, EditModuleForm, EditLessonForm } from "@/app/admin/EditForms";
 import { formatDeadline, getDeadlineStatus, deadlineColors } from "@/lib/training/deadlines";
 
 export default async function AdminCoursePage({ params }: { params: Promise<{ courseId: string }> }) {
@@ -50,6 +52,7 @@ export default async function AdminCoursePage({ params }: { params: Promise<{ co
         <div className="flex flex-col items-end gap-2">
           <span className="rounded-full bg-[#d9f2f4] px-4 py-2 text-sm font-medium text-[#007c8b]">{course.status}</span>
           <CourseStatusForm courseId={course.id} status={course.status} />
+          <EditCourseForm courseId={course.id} title={course.title} description={course.description} />
         </div>
       </div>
 
@@ -65,13 +68,33 @@ export default async function AdminCoursePage({ params }: { params: Promise<{ co
         <div className="mt-6 space-y-5">
           {modulesWithLessons.map(({ module: mod, lessons }) => (
             <div key={mod.id} className="rounded-xl border border-[#d5e9ed] p-5">
-              <h3 className="font-semibold text-[#002f65]">{mod.title}</h3>
-              {mod.description && <p className="mt-1 text-sm text-[#526b78]">{mod.description}</p>}
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-semibold text-[#002f65]">{mod.title}</h3>
+                  {mod.description && <p className="mt-1 text-sm text-[#526b78]">{mod.description}</p>}
+                </div>
+                <EditModuleForm
+                  moduleId={mod.id}
+                  courseId={courseId}
+                  title={mod.title}
+                  description={mod.description}
+                  sortOrder={mod.sort_order}
+                />
+              </div>
               <div className="mt-4 space-y-2">
                 {lessons.map((lesson) => (
-                  <div key={lesson.id} className="rounded-lg bg-[#f6feff] px-4 py-3 text-sm">
-                    <span className="font-medium text-[#002f65]">{lesson.title}</span>
-                    <span className="ml-3 text-[#526b78]">{lesson.content_path}</span>
+                  <div key={lesson.id} className="flex items-center justify-between rounded-lg bg-[#f6feff] px-4 py-3 text-sm">
+                    <div>
+                      <span className="font-medium text-[#002f65]">{lesson.title}</span>
+                      <span className="ml-3 text-[#526b78]">{lesson.content_path}</span>
+                    </div>
+                    <EditLessonForm
+                      lessonId={lesson.id}
+                      courseId={courseId}
+                      title={lesson.title}
+                      contentPath={lesson.content_path}
+                      sortOrder={lesson.sort_order}
+                    />
                   </div>
                 ))}
                 <LessonCreateForm courseId={course.id} moduleId={mod.id} />
@@ -153,6 +176,7 @@ export default async function AdminCoursePage({ params }: { params: Promise<{ co
                     <th className="px-4 py-3 text-left font-semibold text-[#002f65]">Status</th>
                     <th className="px-4 py-3 text-left font-semibold text-[#002f65]">Deadline</th>
                     <th className="px-4 py-3 text-left font-semibold text-[#002f65]">Completed</th>
+                    <th className="px-4 py-3 text-left font-semibold text-[#002f65]">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -186,6 +210,18 @@ export default async function AdminCoursePage({ params }: { params: Promise<{ co
                           {enrollment.completed_at
                             ? new Date(enrollment.completed_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
                             : <span className="text-[#b0c8d0]">—</span>}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <UpdateDeadlineForm
+                              enrollmentId={enrollment.id}
+                              courseId={courseId}
+                              currentExpiry={enrollment.expires_at}
+                            />
+                            {enrollment.status !== "completed" && (
+                              <UnenrollButton enrollmentId={enrollment.id} courseId={courseId} />
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );

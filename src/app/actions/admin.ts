@@ -110,6 +110,73 @@ export async function assignCourseToAudienceGroup(_previousState: CourseActionSt
   return { success: true };
 }
 
+export async function updateCourse(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const courseId = String(formData.get("courseId") ?? "");
+  const title = String(formData.get("title") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim();
+  if (!courseId || !title) return { error: "Course title is required." };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("courses").update({ title, description: description || null }).eq("id", courseId);
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}`);
+  revalidatePath("/admin");
+  revalidatePath("/courses");
+  return { success: true };
+}
+
+export async function updateModule(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const moduleId = String(formData.get("moduleId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  const title = String(formData.get("title") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim();
+  const sortOrder = Number(formData.get("sort_order") ?? 0);
+  if (!moduleId || !title) return { error: "Module title is required." };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("modules").update({ title, description: description || null, sort_order: sortOrder }).eq("id", moduleId);
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}`);
+  return { success: true };
+}
+
+export async function updateLesson(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const lessonId = String(formData.get("lessonId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  const title = String(formData.get("title") ?? "").trim();
+  const contentPath = String(formData.get("content_path") ?? "").trim();
+  const sortOrder = Number(formData.get("sort_order") ?? 0);
+  if (!lessonId || !title || !contentPath) return { error: "Lesson title and content path are required." };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("lessons").update({ title, content_path: contentPath, sort_order: sortOrder }).eq("id", lessonId);
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}`);
+  return { success: true };
+}
+
+export async function unenrollLearner(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const enrollmentId = String(formData.get("enrollmentId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  if (!enrollmentId) return { error: "Enrollment ID is required." };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("enrollments").delete().eq("id", enrollmentId);
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}`);
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
+export async function updateEnrollmentDeadline(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const enrollmentId = String(formData.get("enrollmentId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  const expiresAt = String(formData.get("expires_at") ?? "").trim();
+  if (!enrollmentId) return { error: "Enrollment ID is required." };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("enrollments").update({ expires_at: expiresAt || null }).eq("id", enrollmentId);
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}`);
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
 export async function createQuiz(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
   const courseId = String(formData.get("courseId") ?? "");
   const title = String(formData.get("title") ?? "").trim();

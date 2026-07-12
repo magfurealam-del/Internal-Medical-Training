@@ -19,6 +19,11 @@ export function formatDeadline(expiresAt: string | null): string | null {
   return `Due ${new Date(expiresAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}`;
 }
 
+export function isExpired(expiresAt: string | null): boolean {
+  if (!expiresAt) return false;
+  return new Date(expiresAt).getTime() < Date.now();
+}
+
 export const deadlineColors: Record<DeadlineStatus, string> = {
   overdue: "bg-[#fff0ef] text-[#9d2c25]",
   urgent:  "bg-[#fff0ef] text-[#9d2c25]",

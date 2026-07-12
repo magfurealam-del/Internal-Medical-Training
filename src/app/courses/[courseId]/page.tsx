@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCourse, getCourseProgress, getModuleProgress, getNextLesson, listModules } from "@/lib/training/courses";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { formatDeadline, getDeadlineStatus, deadlineColors } from "@/lib/training/deadlines";
+import { formatDeadline, getDeadlineStatus, deadlineColors, isExpired } from "@/lib/training/deadlines";
 
 export default async function CoursePage({ params }: { params: Promise<{ courseId: string }> }) {
   const { courseId } = await params;
@@ -29,6 +29,7 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
     : null;
   const deadlineLabel = formatDeadline(enrollment?.expires_at ?? null);
   const deadlineStatus = getDeadlineStatus(enrollment?.expires_at ?? null);
+  const enrollmentExpired = progress.percentage < 100 && isExpired(enrollment?.expires_at ?? null);
 
   const modulesWithProgress = await Promise.all(
     modules.map(async (module) => ({ module, progress: await getModuleProgress(module.id) })),
@@ -41,6 +42,16 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
       <p className="mt-10 text-sm font-semibold uppercase tracking-[0.2em] text-[#007c8b]">Course overview</p>
       <h1 className="mt-3 text-5xl font-semibold tracking-tight text-[#002f65]">{course.title}</h1>
       <p className="mt-5 max-w-2xl text-lg leading-8 text-[#526b78]">{course.description ?? "Course description coming soon."}</p>
+
+      {enrollmentExpired && (
+        <div className="mt-8 rounded-2xl bg-[#fff8f0] p-5 ring-1 ring-[#f5c07a]">
+          <p className="font-semibold text-[#7c4a00]">⚠️ Your enrolment deadline has passed</p>
+          <p className="mt-1 text-sm text-[#7c4a00]">
+            You can still review the material, but your progress will not count towards a certificate.
+            Contact your training coordinator to arrange re-enrolment.
+          </p>
+        </div>
+      )}
 
       <div className="mt-8 rounded-2xl bg-[#002f65] p-6 text-white">
         <div className="flex items-end justify-between gap-4">

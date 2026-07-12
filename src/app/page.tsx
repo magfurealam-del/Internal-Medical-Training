@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 const foundations = [
   ["01", "Secure access", "Role-aware sign-in for learners, instructors, and administrators."],
@@ -6,7 +8,10 @@ const foundations = [
   ["03", "Clear progress", "A dependable view of what is assigned, started, and complete."],
 ];
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  if (claims?.claims?.sub) redirect("/dashboard");
   return (
     <main className="flex-1 bg-[#f6feff] text-[#002f65]">
       <section className="mx-auto grid max-w-7xl gap-12 px-6 pb-20 pt-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:px-10 lg:pb-28 lg:pt-24">

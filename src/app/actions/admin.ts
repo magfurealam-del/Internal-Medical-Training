@@ -110,6 +110,100 @@ export async function assignCourseToAudienceGroup(_previousState: CourseActionSt
   return { success: true };
 }
 
+// ── Delete actions ──────────────────────────────────────────────────────────
+
+export async function deleteModule(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const moduleId = String(formData.get("moduleId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  if (!moduleId) return { error: "Module ID is required." };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("modules").delete().eq("id", moduleId);
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}`);
+  return { success: true };
+}
+
+export async function deleteLesson(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const lessonId = String(formData.get("lessonId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  if (!lessonId) return { error: "Lesson ID is required." };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("lessons").delete().eq("id", lessonId);
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}`);
+  return { success: true };
+}
+
+export async function deleteQuestion(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const questionId = String(formData.get("questionId") ?? "");
+  const quizId = String(formData.get("quizId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  if (!questionId) return { error: "Question ID is required." };
+  const supabase = await createSupabaseServerClient();
+  const { error } = await supabase.from("questions").delete().eq("id", questionId);
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}/quizzes/${quizId}`);
+  return { success: true };
+}
+
+export async function deleteChoice(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const choiceId = String(formData.get("choiceId") ?? "");
+  const questionId = String(formData.get("questionId") ?? "");
+  const quizId = String(formData.get("quizId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  if (!choiceId) return { error: "Choice ID is required." };
+  const supabase = await createSupabaseServerClient();
+  // If this was the correct choice, clear that reference first
+  await supabase.from("questions").update({ correct_choice_id: null }).eq("id", questionId).eq("correct_choice_id", choiceId);
+  const { error } = await supabase.from("question_choices").delete().eq("id", choiceId);
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}/quizzes/${quizId}`);
+  return { success: true };
+}
+
+// ── Reorder actions ──────────────────────────────────────────────────────────
+
+export async function reorderModule(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const moduleId = String(formData.get("moduleId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  const direction = String(formData.get("direction") ?? "") as "up" | "down";
+  if (!moduleId || !courseId) return { error: "Missing IDs." };
+  const supabase = await createSupabaseServerClient();
+  const { data: modules } = await supabase.from("modules").select("id, sort_order").eq("course_id", courseId).order("sort_order");
+  if (!modules) return { error: "Could not load modules." };
+  const idx = modules.findIndex((m) => m.id === moduleId);
+  const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+  if (swapIdx < 0 || swapIdx >= modules.length) return { success: true };
+  const a = modules[idx], b = modules[swapIdx];
+  await Promise.all([
+    supabase.from("modules").update({ sort_order: b.sort_order }).eq("id", a.id),
+    supabase.from("modules").update({ sort_order: a.sort_order }).eq("id", b.id),
+  ]);
+  revalidatePath(`/admin/courses/${courseId}`);
+  return { success: true };
+}
+
+export async function reorderLesson(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const lessonId = String(formData.get("lessonId") ?? "");
+  const moduleId = String(formData.get("moduleId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  const direction = String(formData.get("direction") ?? "") as "up" | "down";
+  if (!lessonId || !moduleId) return { error: "Missing IDs." };
+  const supabase = await createSupabaseServerClient();
+  const { data: lessons } = await supabase.from("lessons").select("id, sort_order").eq("module_id", moduleId).order("sort_order");
+  if (!lessons) return { error: "Could not load lessons." };
+  const idx = lessons.findIndex((l) => l.id === lessonId);
+  const swapIdx = direction === "up" ? idx - 1 : idx + 1;
+  if (swapIdx < 0 || swapIdx >= lessons.length) return { success: true };
+  const a = lessons[idx], b = lessons[swapIdx];
+  await Promise.all([
+    supabase.from("lessons").update({ sort_order: b.sort_order }).eq("id", a.id),
+    supabase.from("lessons").update({ sort_order: a.sort_order }).eq("id", b.id),
+  ]);
+  revalidatePath(`/admin/courses/${courseId}`);
+  return { success: true };
+}
+
 export async function updateCourse(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
   const courseId = String(formData.get("courseId") ?? "");
   const title = String(formData.get("title") ?? "").trim();

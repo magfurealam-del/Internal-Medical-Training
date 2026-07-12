@@ -11,6 +11,7 @@ import CourseStatusForm from "@/app/admin/CourseStatusForm";
 import QuizCreateForm from "@/app/admin/QuizCreateForm";
 import { UpdateDeadlineForm, UnenrollButton } from "@/app/admin/EnrollmentRowActions";
 import { EditCourseForm, EditModuleForm, EditLessonForm } from "@/app/admin/EditForms";
+import { ModuleControls, LessonControls } from "@/app/admin/DeleteButtons";
 import { formatDeadline, getDeadlineStatus, deadlineColors } from "@/lib/training/deadlines";
 
 export default async function AdminCoursePage({ params }: { params: Promise<{ courseId: string }> }) {
@@ -66,35 +67,52 @@ export default async function AdminCoursePage({ params }: { params: Promise<{ co
           <p className="mt-6 text-sm text-[#526b78]">No modules yet. Create the first one below.</p>
         )}
         <div className="mt-6 space-y-5">
-          {modulesWithLessons.map(({ module: mod, lessons }) => (
+          {modulesWithLessons.map(({ module: mod, lessons }, modIdx) => (
             <div key={mod.id} className="rounded-xl border border-[#d5e9ed] p-5">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <h3 className="font-semibold text-[#002f65]">{mod.title}</h3>
                   {mod.description && <p className="mt-1 text-sm text-[#526b78]">{mod.description}</p>}
                 </div>
-                <EditModuleForm
-                  moduleId={mod.id}
-                  courseId={courseId}
-                  title={mod.title}
-                  description={mod.description}
-                  sortOrder={mod.sort_order}
-                />
+                <div className="flex items-center gap-2 shrink-0">
+                  <ModuleControls
+                    moduleId={mod.id}
+                    courseId={courseId}
+                    isFirst={modIdx === 0}
+                    isLast={modIdx === modulesWithLessons.length - 1}
+                  />
+                  <EditModuleForm
+                    moduleId={mod.id}
+                    courseId={courseId}
+                    title={mod.title}
+                    description={mod.description}
+                    sortOrder={mod.sort_order}
+                  />
+                </div>
               </div>
               <div className="mt-4 space-y-2">
-                {lessons.map((lesson) => (
+                {lessons.map((lesson, lessonIdx) => (
                   <div key={lesson.id} className="flex items-center justify-between rounded-lg bg-[#f6feff] px-4 py-3 text-sm">
-                    <div>
+                    <div className="min-w-0">
                       <span className="font-medium text-[#002f65]">{lesson.title}</span>
-                      <span className="ml-3 text-[#526b78]">{lesson.content_path}</span>
+                      <span className="ml-3 truncate text-[#526b78]">{lesson.content_path}</span>
                     </div>
-                    <EditLessonForm
-                      lessonId={lesson.id}
-                      courseId={courseId}
-                      title={lesson.title}
-                      contentPath={lesson.content_path}
-                      sortOrder={lesson.sort_order}
-                    />
+                    <div className="flex items-center gap-2 shrink-0 ml-3">
+                      <LessonControls
+                        lessonId={lesson.id}
+                        moduleId={mod.id}
+                        courseId={courseId}
+                        isFirst={lessonIdx === 0}
+                        isLast={lessonIdx === lessons.length - 1}
+                      />
+                      <EditLessonForm
+                        lessonId={lesson.id}
+                        courseId={courseId}
+                        title={lesson.title}
+                        contentPath={lesson.content_path}
+                        sortOrder={lesson.sort_order}
+                      />
+                    </div>
                   </div>
                 ))}
                 <LessonCreateForm courseId={course.id} moduleId={mod.id} />

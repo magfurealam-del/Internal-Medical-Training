@@ -5,6 +5,7 @@ import { requireTrainingStaff } from "@/lib/training/auth";
 import QuestionForm from "./QuestionForm";
 import ChoiceForm from "./ChoiceForm";
 import SetCorrectChoiceForm from "./SetCorrectChoiceForm";
+import { DeleteQuestionButton, DeleteChoiceButton } from "@/app/admin/DeleteButtons";
 
 export default async function QuizManagementPage({
   params,
@@ -49,6 +50,7 @@ export default async function QuizManagementPage({
                     <p className="mt-1 text-sm italic text-[#526b78]">Explanation: {question.explanation}</p>
                   )}
                 </div>
+                <DeleteQuestionButton questionId={question.id} quizId={quizId} courseId={courseId} />
               </div>
 
               {/* Choices */}
@@ -77,14 +79,22 @@ export default async function QuizManagementPage({
                             {choice.choice_text}
                           </span>
                         </div>
-                        {!isCorrect && (
-                          <SetCorrectChoiceForm
-                            courseId={courseId}
-                            quizId={quizId}
-                            questionId={question.id}
+                        <div className="flex items-center gap-2">
+                          {!isCorrect && (
+                            <SetCorrectChoiceForm
+                              courseId={courseId}
+                              quizId={quizId}
+                              questionId={question.id}
+                              choiceId={choice.id}
+                            />
+                          )}
+                          <DeleteChoiceButton
                             choiceId={choice.id}
+                            questionId={question.id}
+                            quizId={quizId}
+                            courseId={courseId}
                           />
-                        )}
+                        </div>
                       </div>
                     );
                   })

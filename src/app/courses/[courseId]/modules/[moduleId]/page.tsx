@@ -10,8 +10,10 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
   if (!course || !module || module.course_id !== course.id) notFound();
 
   const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const isSignedIn = Boolean(claims?.claims?.sub);
   const [{ data: quiz }, completedIds, moduleProgress] = await Promise.all([
-    supabase.from("quizzes").select("id, title").eq("module_id", module.id).maybeSingle(),
+    isSignedIn ? supabase.from("quizzes").select("id, title").eq("module_id", module.id).maybeSingle() : Promise.resolve({ data: null }),
     getCompletedLessonIds(lessons.map((l) => l.id)),
     getModuleProgress(moduleId),
   ]);
@@ -47,6 +49,7 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
       </div>
 
       <section className="mt-10">
+        {!isSignedIn && <div className="mb-6 rounded-2xl border border-[#c7e7ea] bg-[#edf7f8] p-5 text-sm leading-6 text-[#345d68]">Public preview mode: lessons are open to read. Progress tracking and assessments will return when sign-in is re-enabled.</div>}
         <h2 className="text-xl font-semibold text-[#002f65]">Lessons</h2>
         {lessons.length === 0 ? (
           <div className="mt-5 rounded-2xl border border-dashed border-[#9dd7de] bg-white p-10 text-center text-[#526b78]">

@@ -4,6 +4,7 @@ import LessonContent from "./LessonContent";
 import { notFound } from "next/navigation";
 import { getCourse, getCompletedLessonIds, getLesson, getModule, listLessons } from "@/lib/training/courses";
 import { LearningBreadcrumbs } from "@/components/LearningBreadcrumbs";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export default async function LessonPage({ params }: { params: Promise<{ courseId: string; moduleId: string; lessonId: string }> }) {
   const { courseId, moduleId, lessonId } = await params;
@@ -23,6 +24,9 @@ export default async function LessonPage({ params }: { params: Promise<{ courseI
   const nextLesson = currentIndex < allLessons.length - 1 ? allLessons[currentIndex + 1] : null;
 
   const content = await readLessonContent(lesson.content_path);
+  const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const isSignedIn = Boolean(claims?.claims?.sub);
 
   return (
     <main className="mx-auto max-w-4xl px-6 py-12 lg:px-10">
@@ -66,7 +70,9 @@ export default async function LessonPage({ params }: { params: Promise<{ courseI
 
       {/* Complete & navigate */}
       <div className="mt-8 rounded-2xl bg-[#f6feff] p-6 ring-1 ring-[#d5e9ed]">
-        {isComplete ? (
+        {!isSignedIn ? (
+          <p className="text-sm leading-6 text-[#526b78]">Public preview mode: this lesson is available to read without sign-in. Completion tracking will return with the learner account flow.</p>
+        ) : isComplete ? (
           <div className="flex items-center gap-3 text-[#145c36]">
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#e4f7ec] text-sm font-bold">✓</span>
             <p className="font-semibold">You have completed this lesson.</p>

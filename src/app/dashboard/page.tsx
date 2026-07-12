@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCourseProgress, getNextLesson, listCertificates, listCourses } from "@/lib/training/courses";
+import { formatDeadline, getDeadlineStatus, deadlineColors } from "@/lib/training/deadlines";
 
 export default async function DashboardPage() {
   const [courses, certificates] = await Promise.all([listCourses(), listCertificates()]);
@@ -95,11 +96,20 @@ export default async function DashboardPage() {
               <Link key={course.id} href={`/courses/${course.id}`} className="group rounded-2xl bg-white p-6 ring-1 ring-[#d5e9ed] transition hover:ring-[#007c8b]">
                 <div className="flex items-start justify-between gap-3">
                   <h3 className="text-xl font-semibold text-[#002f65]">{course.title}</h3>
-                  {progress.percentage === 100 ? (
-                    <span className="rounded-full bg-[#e4f7ec] px-3 py-1 text-xs font-semibold text-[#145c36]">Complete</span>
-                  ) : (
-                    <span className="text-sm font-semibold text-[#007c8b]">{progress.percentage}%</span>
-                  )}
+                  <div className="flex flex-col items-end gap-1.5 shrink-0">
+                    {progress.percentage === 100 ? (
+                      <span className="rounded-full bg-[#e4f7ec] px-3 py-1 text-xs font-semibold text-[#145c36]">Complete</span>
+                    ) : (
+                      <span className="text-sm font-semibold text-[#007c8b]">{progress.percentage}%</span>
+                    )}
+                    {(() => {
+                      const label = formatDeadline(course.enrollment?.expires_at ?? null);
+                      const status = getDeadlineStatus(course.enrollment?.expires_at ?? null);
+                      return label ? (
+                        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${deadlineColors[status]}`}>{label}</span>
+                      ) : null;
+                    })()}
+                  </div>
                 </div>
                 {next && progress.percentage < 100 && (
                   <p className="mt-2 text-sm text-[#526b78]">Next: <span className="font-medium text-[#002f65]">{next.lesson.title}</span></p>

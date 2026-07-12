@@ -8,6 +8,14 @@ export type Course = {
   status: string;
   content_version: string;
   audience_groups?: AudienceGroup[];
+  enrollment?: Enrollment | null;
+};
+
+export type Enrollment = {
+  id: string;
+  status: string;
+  expires_at: string | null;
+  completed_at: string | null;
 };
 
 export type AudienceGroup = { id: string; name: string; slug: string };
@@ -34,6 +42,9 @@ export type TrainingProfile = { id: string; full_name: string | null; role: stri
 
 export async function listCourses() {
   const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+
   const { data, error } = await supabase
     .from("courses")
     .select("id, title, slug, description, status, content_version, course_audience_groups(audience_groups(id, name, slug))")
@@ -41,7 +52,31 @@ export async function listCourses() {
     .order("title");
 
   if (error) throw new Error(error.message);
-  return (data ?? []).map((course) => ({ ...course, audience_groups: (course.course_audience_groups ?? []).flatMap((item) => item.audience_groups ?? []) })) as Course[];
+  const courses = (data ?? []).map((course) => ({
+    ...course,
+    audience_groups: (course.course_audience_groups ?? []).flatMap((item) => item.audience_groups ?? []),
+  }));
+
+  if (!userId) return courses as Course[];
+
+  const { data: enrollments } = await supabase
+    .from("enrollments")
+    .select("id, course_id, status, expires_at, completed_at")
+    .eq("user_id", userId)
+    .in("course_id", courses.map((c) => c.id));
+
+  const enrollmentByCourse = new Map((enrollments ?? []).map((e) => [e.course_id, e]));
+  return courses.map((course) => ({
+    ...course,
+    enrollment: enrollmentByCourse.get(course.id) ?? null,
+  })) as Course[];
+}
+
+export async function listAudienceGroups() {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.from("audience_groups").select("id, name, slug").order("name");
+  if (error) throw new Error(error.message);
+  return (data ?? []) as AudienceGroup[];
 }
 
 export async function listAllCourses() {

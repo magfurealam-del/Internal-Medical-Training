@@ -1,9 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCourse, getCourseProgress, getModuleProgress, getNextLesson, listModules } from "@/lib/training/courses";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { formatDeadline, getDeadlineStatus, deadlineColors } from "@/lib/training/deadlines";
 
 export default async function CoursePage({ params }: { params: Promise<{ courseId: string }> }) {
   const { courseId } = await params;
+  const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+
   const [course, modules, progress, next] = await Promise.all([
     getCourse(courseId),
     listModules(courseId),
@@ -11,6 +17,18 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
     getNextLesson(courseId),
   ]);
   if (!course) notFound();
+
+  const enrollment = userId
+    ? await supabase
+        .from("enrollments")
+        .select("expires_at")
+        .eq("user_id", userId)
+        .eq("course_id", courseId)
+        .maybeSingle()
+        .then(({ data }) => data)
+    : null;
+  const deadlineLabel = formatDeadline(enrollment?.expires_at ?? null);
+  const deadlineStatus = getDeadlineStatus(enrollment?.expires_at ?? null);
 
   const modulesWithProgress = await Promise.all(
     modules.map(async (module) => ({ module, progress: await getModuleProgress(module.id) })),
@@ -30,6 +48,11 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
             <p className="text-sm text-white/65">Your progress</p>
             <p className="mt-1 text-3xl font-semibold">{progress.percentage}%</p>
             <p className="mt-1 text-xs text-white/55">{progress.completed} of {progress.total} required lessons complete</p>
+            {deadlineLabel && (
+              <span className={`mt-3 inline-block rounded-full px-3 py-1 text-xs font-semibold ${deadlineColors[deadlineStatus]}`}>
+                {deadlineLabel}
+              </span>
+            )}
           </div>
           {next ? (
             <Link

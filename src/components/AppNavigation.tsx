@@ -190,7 +190,7 @@ export function AppNavigation() {
                   onClick={() => setOpen(false)}
                   className="block rounded-xl bg-[#123d69] px-4 py-3 text-center text-sm font-semibold text-white"
                 >
-                  Sign in
+                  Public preview
                 </Link>
               )}
             </div>

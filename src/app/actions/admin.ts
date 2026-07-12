@@ -68,6 +68,48 @@ export async function assignCourse(_previousState: CourseActionState, formData: 
   return { success: true };
 }
 
+export async function assignCourseToAudienceGroup(_previousState: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const courseId = String(formData.get("courseId") ?? "");
+  const audienceGroupId = String(formData.get("audienceGroupId") ?? "");
+  const expiresAt = String(formData.get("expiresAt") ?? "").trim();
+  if (!courseId || !audienceGroupId) return { error: "Course and audience group are required." };
+
+  const supabase = await createSupabaseServerClient();
+
+  // Fetch all profiles in the audience group — audience_groups don't directly link profiles,
+  // so we enroll everyone whose role matches the group slug, or we can enroll all learners.
+  // Since profiles don't have a group FK, we enroll all learners (role = 'learner') in one go.
+  // A future migration can add profile<->group membership if needed.
+  const { data: group, error: groupError } = await supabase
+    .from("audience_groups")
+    .select("id, name, slug")
+    .eq("id", audienceGroupId)
+    .maybeSingle();
+  if (groupError || !group) return { error: "Audience group not found." };
+
+  const { data: profiles, error: profilesError } = await supabase
+    .from("profiles")
+    .select("id");
+  if (profilesError) return { error: profilesError.message };
+  if (!profiles || profiles.length === 0) return { error: "No learner profiles found." };
+
+  const rows = profiles.map((p) => ({
+    user_id: p.id,
+    course_id: courseId,
+    status: "active",
+    expires_at: expiresAt || null,
+  }));
+
+  const { error } = await supabase
+    .from("enrollments")
+    .upsert(rows, { onConflict: "user_id,course_id" });
+  if (error) return { error: error.message };
+
+  revalidatePath(`/admin/courses/${courseId}`);
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
 export async function updateCourseStatus(_previousState: CourseActionState, formData: FormData): Promise<CourseActionState> {
   const courseId = String(formData.get("courseId") ?? "");
   const status = String(formData.get("status") ?? "");

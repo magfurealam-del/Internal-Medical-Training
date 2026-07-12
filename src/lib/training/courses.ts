@@ -47,15 +47,12 @@ export async function listCourses() {
 
   const { data, error } = await supabase
     .from("courses")
-    .select("id, title, slug, description, status, content_version, course_audience_groups(audience_groups(id, name, slug))")
+    .select("id, title, slug, description, status, content_version")
     .eq("status", "published")
     .order("title");
 
   if (error) throw new Error(error.message);
-  const courses = (data ?? []).map((course) => ({
-    ...course,
-    audience_groups: (course.course_audience_groups ?? []).flatMap((item) => item.audience_groups ?? []),
-  }));
+  const courses = data ?? [];
 
   if (!userId) return courses as Course[];
 

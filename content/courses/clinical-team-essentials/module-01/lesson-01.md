@@ -42,3 +42,7 @@ Observe and document skin integrity, color, temperature, moisture, tissue appear
 ## Take-home rule
 
 The layer involved is not just a description of the wound. It is evidence about which biological functions have been lost.
+
+## Module 1 pathway
+
+This module is a complete, multi-page anatomy sequence. Continue through the lesson list to connect the skin barrier to epidermal renewal, dermal strength, subcutaneous cushioning, wound-environment control, age- and diabetes-related vulnerability, anatomy-based depth assessment, and integrated documentation.

@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { submitQuiz, type QuizState } from "@/app/actions/quiz";
+import { submitQuiz, type QuizState, type ReviewItem } from "@/app/actions/quiz";
 import type { QuizItem } from "@/lib/training/quizzes";
 
 const initialState: QuizState = {};
@@ -26,19 +26,23 @@ export default function QuizForm({
   if (state.result) {
     const { passed, score_percentage, certificate_id } = state.result;
     return (
-      <div className="mt-8 space-y-5">
+      <div className="mt-8 space-y-6">
+        {/* Score card */}
         <div className={`rounded-2xl p-8 ${passed ? "bg-[#e4f7ec]" : "bg-[#fff0ef]"}`}>
           <p className={`text-xs font-semibold uppercase tracking-[0.2em] ${passed ? "text-[#145c36]" : "text-[#9d2c25]"}`}>
             {passed ? "Assessment passed" : "Assessment not passed"}
           </p>
-          <p className={`mt-3 text-5xl font-semibold ${passed ? "text-[#145c36]" : "text-[#9d2c25]"}`}>{score_percentage}%</p>
+          <p className={`mt-3 text-5xl font-semibold ${passed ? "text-[#145c36]" : "text-[#9d2c25]"}`}>
+            {score_percentage}%
+          </p>
           <p className={`mt-2 text-sm ${passed ? "text-[#1a7040]" : "text-[#b03020]"}`}>
             {passed
               ? `Well done — you met the ${passPercentage}% pass mark.`
-              : `You need ${passPercentage}% to pass. Review the material and try again.`}
+              : `You need ${passPercentage}% to pass. Review the questions below, then retry.`}
           </p>
         </div>
 
+        {/* Actions */}
         <div className="flex flex-col gap-3 sm:flex-row">
           {certificate_id && (
             <a
@@ -63,6 +67,16 @@ export default function QuizForm({
             </button>
           )}
         </div>
+
+        {/* Answer review */}
+        {state.review && state.review.length > 0 && (
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold text-[#002f65]">Question review</h2>
+            {state.review.map((item, index) => (
+              <ReviewCard key={item.question_id} item={item} index={index} />
+            ))}
+          </section>
+        )}
       </div>
     );
   }
@@ -154,5 +168,59 @@ export default function QuizForm({
         </button>
       </div>
     </form>
+  );
+}
+
+function ReviewCard({ item, index }: { item: ReviewItem; index: number }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className={`rounded-2xl p-5 ${item.is_correct ? "bg-[#f0faf5] ring-1 ring-[#a8dfc0]" : "bg-[#fff8f7] ring-1 ring-[#f5c6c0]"}`}>
+      <div className="flex items-start gap-3">
+        <span
+          className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+            item.is_correct ? "bg-[#007c8b] text-white" : "bg-[#c0392b] text-white"
+          }`}
+        >
+          {item.is_correct ? "✓" : "✗"}
+        </span>
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold text-[#002f65]">
+            <span className="mr-2 text-sm text-[#526b78]">{index + 1}.</span>
+            {item.prompt}
+          </p>
+
+          <div className="mt-3 space-y-1.5 text-sm">
+            <p className={item.is_correct ? "text-[#145c36]" : "text-[#9d2c25]"}>
+              <span className="font-medium">Your answer: </span>
+              {item.selected_choice_text ?? "No answer"}
+            </p>
+            {!item.is_correct && item.correct_choice_text && (
+              <p className="text-[#145c36]">
+                <span className="font-medium">Correct answer: </span>
+                {item.correct_choice_text}
+              </p>
+            )}
+          </div>
+
+          {item.explanation && (
+            <div className="mt-3">
+              <button
+                type="button"
+                onClick={() => setOpen((v) => !v)}
+                className="text-xs font-semibold text-[#007c8b] underline-offset-2 hover:underline"
+              >
+                {open ? "Hide explanation ▲" : "Show explanation ▼"}
+              </button>
+              {open && (
+                <p className="mt-2 rounded-xl bg-white px-4 py-3 text-sm leading-6 text-[#526b78] ring-1 ring-[#d5e9ed]">
+                  {item.explanation}
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

@@ -78,7 +78,17 @@ export default async function DashboardPage() {
           <Link href="/courses" className="text-sm font-semibold text-[#007c8b]">View catalogue →</Link>
         </div>
         {coursesWithProgress.length === 0 ? (
-          <div className="mt-5 rounded-2xl border border-dashed border-[#9dd7de] bg-white p-10 text-center text-[#526b78]">No courses assigned yet.</div>
+          <div className="mt-5 rounded-2xl border border-dashed border-[#9dd7de] bg-white p-10 text-center">
+            <p className="text-4xl">📋</p>
+            <p className="mt-4 font-semibold text-[#002f65]">No courses assigned yet</p>
+            <p className="mt-2 text-sm leading-6 text-[#526b78]">
+              Your administrator will assign training courses to you.<br />
+              Check back here once you have been enrolled.
+            </p>
+            <a href="mailto:" className="mt-5 inline-block text-sm font-semibold text-[#007c8b]">
+              Contact your training coordinator →
+            </a>
+          </div>
         ) : (
           <div className="mt-5 grid gap-5 md:grid-cols-2">
             {coursesWithProgress.map(({ course, progress, next }) => (

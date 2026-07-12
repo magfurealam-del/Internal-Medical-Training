@@ -132,3 +132,118 @@ body {
     @apply font-sans;
   }
 }
+
+/* ── Lesson reading typography ─────────────────────────────────────── */
+.lesson-content {
+  color: #1a3050;
+  font-size: 1rem;
+  line-height: 1.8;
+  max-width: 72ch;
+}
+
+.lesson-content h1,
+.lesson-content h2,
+.lesson-content h3,
+.lesson-content h4 {
+  color: #002f65;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-top: 2em;
+  margin-bottom: 0.6em;
+  line-height: 1.3;
+}
+.lesson-content h1 { font-size: 1.75rem; margin-top: 0; }
+.lesson-content h2 { font-size: 1.35rem; padding-bottom: 0.4em; border-bottom: 1px solid #d5e9ed; }
+.lesson-content h3 { font-size: 1.1rem; color: #007c8b; }
+.lesson-content h4 { font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.06em; color: #526b78; }
+
+.lesson-content p { margin-bottom: 1.1em; }
+
+.lesson-content a { color: #007c8b; text-decoration: underline; text-underline-offset: 3px; }
+.lesson-content a:hover { color: #005f6b; }
+
+.lesson-content strong { color: #002f65; font-weight: 600; }
+.lesson-content em { font-style: italic; }
+
+.lesson-content ul,
+.lesson-content ol {
+  margin: 1em 0 1.2em 0;
+  padding-left: 1.6em;
+}
+.lesson-content ul { list-style-type: disc; }
+.lesson-content ol { list-style-type: decimal; }
+.lesson-content li { margin-bottom: 0.45em; }
+.lesson-content li > ul,
+.lesson-content li > ol { margin-top: 0.3em; margin-bottom: 0.3em; }
+
+/* Clinical callout — blockquote styled as a key-point panel */
+.lesson-content blockquote {
+  margin: 1.5em 0;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid #007c8b;
+  background: #edf7f8;
+  border-radius: 0 0.75rem 0.75rem 0;
+  color: #1a3050;
+}
+.lesson-content blockquote p { margin-bottom: 0; }
+.lesson-content blockquote strong { color: #007c8b; }
+
+/* Tables */
+.lesson-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  display: block;
+}
+.lesson-content thead { background: #002f65; color: white; }
+.lesson-content th {
+  padding: 0.65rem 0.9rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+.lesson-content td {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid #d5e9ed;
+  vertical-align: top;
+}
+.lesson-content tr:last-child td { border-bottom: none; }
+.lesson-content tbody tr:nth-child(even) { background: #f6feff; }
+
+/* Inline code */
+.lesson-content code {
+  background: #edf7f8;
+  color: #007c8b;
+  font-family: "Geist Mono", ui-monospace, monospace;
+  font-size: 0.85em;
+  padding: 0.15em 0.45em;
+  border-radius: 0.3rem;
+}
+
+/* Code blocks */
+.lesson-content pre {
+  background: #0f2035;
+  color: #c8e6f0;
+  padding: 1.25rem 1.5rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+.lesson-content pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* Horizontal rule */
+.lesson-content hr {
+  border: none;
+  border-top: 1px solid #d5e9ed;
+  margin: 2em 0;
+}

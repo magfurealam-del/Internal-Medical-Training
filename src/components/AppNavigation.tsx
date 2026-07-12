@@ -29,7 +29,7 @@ export function AppNavigation() {
         </Link>
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary navigation">
           {links.map((link) => <Link key={link.href} href={link.href} className={`rounded-lg px-4 py-2.5 text-sm font-medium transition ${isActive(pathname, link.href) ? "bg-[#edf7f8] text-[#123d69]" : "text-[#527084] hover:bg-[#f4fafb] hover:text-[#123d69]"}`}>{link.label}</Link>)}
-          {adminArea ? <Link href="/admin" className="ml-2 rounded-lg bg-[#123d69] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0b2b4f">Admin workspace</Link> : <Link href="/admin" className="ml-2 rounded-lg border border-[#d9e9ec] px-4 py-2.5 text-sm font-medium text-[#527084] transition hover:border-[#86bdc6] hover:text-[#123d69]">Staff area</Link>}
+          {adminArea ? <Link href="/admin" className="ml-2 rounded-lg bg-[#123d69] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0b2b4f]">Admin workspace</Link> : <Link href="/admin" className="ml-2 rounded-lg border border-[#d9e9ec] px-4 py-2.5 text-sm font-medium text-[#527084] transition hover:border-[#86bdc6] hover:text-[#123d69]">Staff area</Link>}
         </nav>
         <button type="button" className="rounded-lg border border-[#d9e9ec] p-2.5 text-[#123d69] lg:hidden" aria-expanded={open} aria-controls="mobile-navigation" aria-label={open ? "Close navigation" : "Open navigation"} onClick={() => setOpen((value) => !value)}><span className="block h-0.5 w-5 bg-current" /><span className="mt-1.5 block h-0.5 w-5 bg-current" /><span className="mt-1.5 block h-0.5 w-5 bg-current" /></button>
       </div>

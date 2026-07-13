@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getCourse, getCompletedLessonIds, getModule, getModuleProgress, listLessons } from "@/lib/training/courses";
+import { getCourse, getModule, listLessons } from "@/lib/training/courses";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { LearningBreadcrumbs } from "@/components/LearningBreadcrumbs";
 import LessonList from "./LessonList";
@@ -11,14 +11,21 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
 
   const supabase = await createSupabaseServerClient();
   const { data: claims } = await supabase.auth.getClaims();
-  const isSignedIn = Boolean(claims?.claims?.sub);
-  const [{ data: quiz }, completedIds, moduleProgress] = await Promise.all([
+  const userId = claims?.claims?.sub;
+  const isSignedIn = Boolean(userId);
+
+  const lessonIds = lessons.map((l) => l.id);
+  const [{ data: quiz }, { data: progressRows }] = await Promise.all([
     supabase.from("quizzes").select("id, title").eq("module_id", module.id).maybeSingle(),
-    getCompletedLessonIds(lessons.map((l) => l.id)),
-    getModuleProgress(moduleId),
+    userId && lessonIds.length
+      ? supabase.from("lesson_progress").select("lesson_id").eq("user_id", userId).in("lesson_id", lessonIds).not("completed_at", "is", null)
+      : Promise.resolve({ data: [] }),
   ]);
 
-  const allLessonsComplete = moduleProgress.total > 0 && moduleProgress.completed === moduleProgress.total;
+  const completedIds = new Set((progressRows ?? []).map((p) => p.lesson_id));
+  const requiredTotal = lessons.filter((l) => l.is_required).length;
+  const requiredCompleted = lessons.filter((l) => l.is_required && completedIds.has(l.id)).length;
+  const allLessonsComplete = requiredTotal > 0 && requiredCompleted === requiredTotal;
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-16 lg:px-10">
@@ -39,11 +46,11 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
         <div className="h-2 flex-1 rounded-full bg-[#d9f2f4]">
           <div
             className="h-2 rounded-full bg-[#007c8b] transition-all"
-            style={{ width: moduleProgress.total > 0 ? `${Math.round((moduleProgress.completed / moduleProgress.total) * 100)}%` : "0%" }}
+            style={{ width: requiredTotal > 0 ? `${Math.round((requiredCompleted / requiredTotal) * 100)}%` : "0%" }}
           />
         </div>
         <span className="shrink-0 text-sm font-medium text-[#526b78]">
-          {moduleProgress.completed} / {moduleProgress.total} lessons
+          {requiredCompleted} / {requiredTotal} lessons
         </span>
         {allLessonsComplete && <span className="shrink-0 rounded-full bg-[#e4f7ec] px-3 py-1 text-xs font-semibold text-[#145c36]">Complete</span>}
       </div>

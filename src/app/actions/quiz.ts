@@ -1,6 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { sendCertificateEmail } from "@/lib/training/email";
 
 export async function submitQuiz(_previousState: QuizState, formData: FormData): Promise<QuizState> {
@@ -29,7 +30,7 @@ export async function submitQuiz(_previousState: QuizState, formData: FormData):
         if (userId && certificateId) {
           const [{ data: profile }, { data: userRecord }, { data: quiz }] = await Promise.all([
             supabase.from("profiles").select("full_name").eq("id", userId).maybeSingle(),
-            supabase.auth.admin.getUserById(userId),
+            getSupabaseAdminClient().auth.admin.getUserById(userId),
             supabase.from("quizzes").select("courses(title)").eq("id", quizId).maybeSingle(),
           ]);
           const email = userRecord?.user?.email;

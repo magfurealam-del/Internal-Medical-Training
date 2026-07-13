@@ -278,6 +278,15 @@ export async function getPreviousAttempt(quizId: string) {
   return (data ?? [])[0] ?? null;
 }
 
+export async function getAttemptCount(quizId: string): Promise<number> {
+  const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+  if (!userId) return 0;
+  const { count } = await supabase.from("attempts").select("*", { count: "exact", head: true }).eq("quiz_id", quizId).eq("user_id", userId);
+  return count ?? 0;
+}
+
 export type Quiz = { id: string; course_id: string; module_id: string | null; title: string; pass_percentage: number; sort_order: number };
 export type Question = { id: string; quiz_id: string; prompt: string; explanation: string | null; correct_choice_id: string | null; sort_order: number };
 export type Choice = { id: string; question_id: string; choice_text: string; sort_order: number };

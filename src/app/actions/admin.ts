@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import { sendEnrollmentEmail } from "@/lib/training/email";
 
 async function assertAdmin(): Promise<{ supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>; userId: string } | { error: string }> {
@@ -87,7 +88,7 @@ export async function assignCourse(_previousState: CourseActionState, formData: 
     const [{ data: profile }, { data: course }, { data: userRecord }] = await Promise.all([
       supabase.from("profiles").select("full_name").eq("id", userId).maybeSingle(),
       supabase.from("courses").select("title").eq("id", courseId).maybeSingle(),
-      supabase.auth.admin.getUserById(userId),
+      getSupabaseAdminClient().auth.admin.getUserById(userId),
     ]);
     const email = userRecord?.user?.email;
     if (email && course) {
@@ -131,7 +132,8 @@ export async function assignCourseToAudienceGroup(_previousState: CourseActionSt
 
   const { data: profiles, error: profilesError } = await supabase
     .from("profiles")
-    .select("id");
+    .select("id")
+    .eq("role", "learner");
   if (profilesError) return { error: profilesError.message };
   if (!profiles || profiles.length === 0) return { error: "No learner profiles found." };
 
@@ -155,7 +157,7 @@ export async function assignCourseToAudienceGroup(_previousState: CourseActionSt
         profiles.map(async (p) => {
           const [{ data: profile }, { data: userRecord }] = await Promise.all([
             supabase.from("profiles").select("full_name").eq("id", p.id).maybeSingle(),
-            supabase.auth.admin.getUserById(p.id),
+            getSupabaseAdminClient().auth.admin.getUserById(p.id),
           ]);
           const email = userRecord?.user?.email;
           if (email) {

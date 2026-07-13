@@ -43,6 +43,14 @@ Observe and document skin integrity, color, temperature, moisture, tissue appear
 
 The layer involved is not just a description of the wound. It is evidence about which biological functions have been lost.
 
+## Professor's deep dive: skin as a control system
+
+Skin continuously controls water movement, mechanical load, temperature, chemical exposure, microbial contact, and sensory warning. The epidermis controls exchange at the surface; the dermis supplies structural, vascular and neural infrastructure; the subcutis distributes force and protects deeper tissue. Build every assessment as: structure affected → function lost → mechanism maintaining injury → finding that would confirm it.
+
+![Anatomical cross-section of skin](https://commons.wikimedia.org/wiki/Special:FilePath/Anatomy_of_the_skin.jpg)
+
+Further reading: [NCBI skin anatomy](https://www.ncbi.nlm.nih.gov/books/NBK441980/) and [DermNet skin barrier function](https://dermnetnz.org/topics/skin-barrier-function).
+
 ## Module 1 pathway
 
 This module is a complete, multi-page anatomy sequence. Continue through the lesson list to connect the skin barrier to epidermal renewal, dermal strength, subcutaneous cushioning, wound-environment control, age- and diabetes-related vulnerability, anatomy-based depth assessment, and integrated documentation.

@@ -47,6 +47,22 @@ Action and monitoring plan:
 
 The learner should be able to explain how skin structure produces clinical function, how function loss produces risk, and how to document the mechanism before selecting a dressing or device.
 
+## Professor's case-conference method
+
+Use four passes. First describe without interpretation: site, dimensions, tissue, edge, periwound, drainage, pain, temperature and color. Second identify likely mechanisms: pressure, shear, trauma, neuropathy, perfusion, inflammation, moisture or mixed. Third list missing data that could change the decision: pulses, sensation, loading, systemic symptoms, medication, nutrition, duration and trajectory. Fourth choose the safest next assessment and document what will be monitored.
+
+### Case 1: plantar lesion
+
+Callus is evidence of repeated load, not the diagnosis. Reduced monofilament response removes protective feedback; footwear or deformity may focus force. Perfusion and infection screening remain necessary because mechanisms can coexist.
+
+### Case 2: fragile skin tear
+
+Ask how the force occurred, whether the flap is viable, whether deeper injury or bleeding is present, and what handling or adhesive exposure must change. Age is a vulnerability factor, not a sufficient explanation.
+
+### Case 3: pale painful wound
+
+Pain with coolness or color asymmetry requires perfusion assessment under local policy. A clean appearance must not reassure the team falsely.
+
 ## Image references
 
 - [Anatomy of the skin — Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Anatomy_of_the_skin.jpg)

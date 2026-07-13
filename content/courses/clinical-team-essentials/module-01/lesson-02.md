@@ -46,6 +46,16 @@ Interpret epidermal findings in context. A red, wet, or darkened surface may ref
 
 Record the exact location, distribution, surface condition, moisture state, and change over time. Avoid vague labels such as “skin poor.”
 
+## Professor's deep dive: renewal and barrier failure
+
+Keratinocytes originate in the basal layer and migrate outward while changing their structure and protein expression. The stratum corneum is a “bricks-and-mortar” barrier: corneocytes provide resistance while extracellular lipids limit diffusion. Tight junctions, cell adhesion, acidic pH and the normal microbiome add further protection. Barrier injury increases transepidermal water loss, irritant penetration and inflammation.
+
+In partial-thickness injury, viable edge keratinocytes and cells associated with hair follicles or glands can migrate across the defect. When the basement membrane and appendages are destroyed, resurfacing depends mainly on wound-edge migration and is slower. Record dryness, fissure, blistering, denudement, maceration and the exposure causing it.
+
+![Layers of the epidermis](https://commons.wikimedia.org/wiki/Special:FilePath/Epidermal_layers.svg)
+
+Further reading: [DermNet skin barrier function](https://dermnetnz.org/topics/skin-barrier-function) and [NCBI epidermis anatomy](https://www.ncbi.nlm.nih.gov/books/NBK470464/).
+
 ## Take-home rule
 
 The epidermis is an active renewing barrier. Any factor that increases surface damage, water loss, or microbial access can become an upstream wound-healing problem.

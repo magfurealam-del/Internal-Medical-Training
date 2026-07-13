@@ -34,6 +34,14 @@ Ask which dermal function is failing: strength, elasticity, perfusion, sensation
 
 Compare temperature, color, edema, pain, sensation, and skin response with the patient’s baseline and the opposite limb when appropriate.
 
+## Professor's deep dive: dermal architecture predicts repair
+
+The papillary dermis lies close to the epidermal junction; the reticular dermis contains dense collagen and elastic networks. Fibroblasts maintain extracellular matrix, while vessels, lymphatics, nerves, follicles and glands make the dermis functional infrastructure. Collagen provides tensile strength, elastin supports recoil, and the hydrated matrix guides cell movement.
+
+When dermis is lost, continuity can return without recreating original architecture. Granulation tissue fills the gap, fibroblasts deposit collagen, and remodeling changes scar strength and flexibility. A clean wound can therefore remain mechanically weak. Assess tissue strength, perfusion, edema, sensation, edge stability and trajectory—not just drainage.
+
+Further reading: [NCBI dermis histology](https://www.ncbi.nlm.nih.gov/books/NBK535346/) and [NCBI wound assessment](https://www.ncbi.nlm.nih.gov/books/NBK482198/).
+
 ## Take-home rule
 
 The dermis is the repair infrastructure. A wound cannot be understood by surface appearance alone if the dermal matrix, vessels, nerves, or appendages are compromised.

@@ -34,6 +34,14 @@ Protect vulnerable skin during positioning, cleansing, adhesive use, and dressin
 
 A thin-skinned older patient develops a skin tear after adhesive removal. The visible tear is the event, not the whole explanation. Contributing mechanisms may include reduced dermal strength, adhesive trauma, dryness, poor handling, anticoagulation, edema, or impaired mobility. The assessment must identify which factors are present and modifiable.
 
+## Professor's deep dive: vulnerability is reduced reserve
+
+Aging may reduce epidermal turnover, dermal thickness, collagen organization, vascular responsiveness and subcutaneous cushioning. Diabetes may add neuropathy, microvascular dysfunction, altered immune response, abnormal collagen biology and slower repair. Edema, malnutrition, smoking, renal disease, steroids, immobility and adhesive trauma can further narrow the safety margin.
+
+Do not treat age or diabetes as the wound diagnosis. Treat them as modifiers that lower the assessment threshold. A diabetic foot requires sensation, perfusion, deformity, callus, footwear, loading and previous-ulcer review. A skin tear requires review of handling, adhesive exposure, edema, medication and flap viability. “Painless” never means “minor.”
+
+Further reading: [NCBI wound assessment](https://www.ncbi.nlm.nih.gov/books/NBK482198/) and [WHO diabetic-foot assessment guidance](https://extranet.who.int/ncdccs/Data/FJI_D1_Diabetes-Management-Guideline_3rd-Edition-2012.pdf).
+
 ## Take-home rule
 
 Risk is the interaction between tissue vulnerability and applied stress. Prevention reduces stress; treatment addresses the injury and the mechanism that created it.

@@ -36,6 +36,14 @@ Integrate depth with etiology, perfusion, sensation, pressure, infection risk, a
 
 Measure and describe consistently, identify change from baseline, and escalate uncertainty about depth or exposed structures.
 
+## Professor's deep dive: depth is an anatomical hypothesis
+
+Depth is not reliably inferred from color, pain or diameter. A small lesion may have a sinus, tunnel or puncture tract; a broad erosion may remain superficial. Establish the deepest visible or appropriately assessed structure and record what cannot be visualized. Epidermal loss can resurface; dermal loss requires matrix repair and often scar; subcutaneous loss changes force transmission; tendon, bone, joint or neurovascular exposure changes urgency and referral.
+
+Document location, orientation, length, width, depth, tissue, edge, periwound, undermining, drainage, pain, sensation, perfusion, loading and trajectory. Use “not visualized” or “uncertain” honestly rather than inventing a stage or diagnosis.
+
+Further reading: [NCBI wound assessment](https://www.ncbi.nlm.nih.gov/books/NBK482198/) and [NCBI wound-healing tissue response](https://www.ncbi.nlm.nih.gov/books/NBK3938/).
+
 ## Take-home rule
 
 Size is one dimension. Depth and the function of the structures involved often determine risk more than surface area alone.

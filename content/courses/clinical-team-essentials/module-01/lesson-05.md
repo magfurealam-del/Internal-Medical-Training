@@ -31,6 +31,14 @@ When a function is lost, predict the secondary consequence. For example, sensory
 
 Use function-based observation: protection, sensation, moisture, temperature, color, and tolerance. Document the patient’s ability to recognize and protect the area.
 
+## Professor's deep dive: functions fail as a network
+
+Barrier, sensation, perfusion, thermoregulation, immune surveillance and mechanical protection are interdependent. Neuropathy removes warning; repetitive loading damages tissue; barrier failure permits inflammation; edema increases diffusion distance; poor perfusion then limits repair. The ulcer is the endpoint of a network failure.
+
+Moisture must be balanced, not maximized. Excess exudate macerates the edge and exposes epidermis to enzymes and irritants; excessive dryness can impede migration and make dressing removal traumatic. Use VIP, TIME, MOIST and the Triangle of Assessment to organize observations while still identifying the actual mechanism.
+
+Further reading: [DermNet normal wound healing](https://dermnetnz.org/cme/wound-healing/normal-wound-healing) and [NCBI skin substitutes background](https://www.ncbi.nlm.nih.gov/books/NBK554225/).
+
 ## Take-home rule
 
 Wound care is often the restoration or compensation of lost skin functions, not simply coverage of a hole.

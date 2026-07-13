@@ -27,6 +27,14 @@ Identify whether the problem is external pressure, internal tissue pressure, she
 
 Inspect pressure points, note positioning and mobility, assess edema and tissue texture, and report changes before superficial breakdown becomes extensive.
 
+## Professor's deep dive: why the subcutis changes pressure risk
+
+Subcutaneous tissue contains adipocytes, fibrous septa, vessels and nerves. It cushions impact, distributes load, insulates, stores energy and allows skin to move over fascia. Its thickness and compliance vary by body site, age, illness, edema and weight change. Loss of cushioning brings skin closer to bone and concentrates force; fibrosis reduces compliance; edema can increase tissue pressure and diffusion distance.
+
+For every pressure-related lesion ask where force is applied, how long it lasts, whether sliding or friction occurs, what lies beneath, and whether the patient can feel or reposition. A dressing cannot correct a mechanical load that continues every day.
+
+Further reading: [DermNet skin barrier function](https://dermnetnz.org/topics/skin-barrier-function) and [NCBI wound assessment](https://www.ncbi.nlm.nih.gov/books/NBK482198/).
+
 ## Take-home rule
 
 A skin lesion may be the visible endpoint of deeper mechanical injury. Always ask what force or pressure is acting below the surface.

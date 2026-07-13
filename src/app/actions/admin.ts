@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { sendEnrollmentEmail } from "@/lib/training/email";
 
 export type CourseActionState = { error?: string; success?: boolean };
 
@@ -63,6 +64,28 @@ export async function assignCourse(_previousState: CourseActionState, formData: 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.from("enrollments").upsert({ user_id: userId, course_id: courseId, status: "active", expires_at: expiresAt || null }, { onConflict: "user_id,course_id" });
   if (error) return { error: error.message };
+
+  // Send enrollment confirmation — best-effort, don't block on failure
+  try {
+    const [{ data: profile }, { data: course }, { data: userRecord }] = await Promise.all([
+      supabase.from("profiles").select("full_name").eq("id", userId).maybeSingle(),
+      supabase.from("courses").select("title").eq("id", courseId).maybeSingle(),
+      supabase.auth.admin.getUserById(userId),
+    ]);
+    const email = userRecord?.user?.email;
+    if (email && course) {
+      await sendEnrollmentEmail({
+        to: email,
+        learnerName: profile?.full_name ?? "there",
+        courseTitle: course.title,
+        courseId,
+        expiresAt: expiresAt || null,
+      });
+    }
+  } catch {
+    // Email failure must not block enrollment
+  }
+
   revalidatePath(`/admin/courses/${courseId}`);
   revalidatePath("/dashboard");
   return { success: true };
@@ -104,6 +127,33 @@ export async function assignCourseToAudienceGroup(_previousState: CourseActionSt
     .from("enrollments")
     .upsert(rows, { onConflict: "user_id,course_id" });
   if (error) return { error: error.message };
+
+  // Send enrollment emails to all enrolled learners — best-effort
+  try {
+    const { data: course } = await supabase.from("courses").select("title").eq("id", courseId).maybeSingle();
+    if (course) {
+      await Promise.allSettled(
+        profiles.map(async (p) => {
+          const [{ data: profile }, { data: userRecord }] = await Promise.all([
+            supabase.from("profiles").select("full_name").eq("id", p.id).maybeSingle(),
+            supabase.auth.admin.getUserById(p.id),
+          ]);
+          const email = userRecord?.user?.email;
+          if (email) {
+            await sendEnrollmentEmail({
+              to: email,
+              learnerName: profile?.full_name ?? "there",
+              courseTitle: course.title,
+              courseId,
+              expiresAt: expiresAt || null,
+            });
+          }
+        })
+      );
+    }
+  } catch {
+    // Email failure must not block enrollment
+  }
 
   revalidatePath(`/admin/courses/${courseId}`);
   revalidatePath("/dashboard");

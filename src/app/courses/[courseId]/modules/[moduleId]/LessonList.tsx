@@ -40,7 +40,7 @@ export default function LessonList({
                 isDone ? "bg-[#007c8b] text-white" : isNext ? "bg-[#007c8b]/10 text-[#007c8b]" : "bg-[#f6feff] text-[#526b78]"
               }`}
             >
-              {isDone ? "✓" : String(index + 1)}
+              {isDone ? "Done" : `Lesson ${index + 1}`}
             </span>
             <div className="min-w-0 flex-1">
               <p className={`font-semibold ${isDone ? "text-[#145c36]" : "text-[#002f65]"}`}>{lesson.title}</p>
@@ -49,9 +49,9 @@ export default function LessonList({
             {isDone ? (
               <span className="shrink-0 text-xs font-semibold text-[#007c8b]">Done</span>
             ) : isNext ? (
-              <span className="shrink-0 rounded-lg bg-[#007c8b] px-3 py-1.5 text-xs font-semibold text-white">Open →</span>
+              <span className="shrink-0 rounded-lg bg-[#007c8b] px-3 py-1.5 text-xs font-semibold text-white">Open</span>
             ) : (
-              <span className="shrink-0 text-sm text-[#b0c8d0]">→</span>
+              <span className="shrink-0 text-sm text-[#b0c8d0]">Open</span>
             )}
           </Link>
         );
@@ -70,14 +70,14 @@ export default function LessonList({
             ✦
           </span>
           <div className="min-w-0 flex-1">
-            <p className={`font-semibold ${firstIncompleteIndex === -1 ? "text-white" : "text-[#002f65]"}`}>Module assessment</p>
+            <p className={`font-semibold ${firstIncompleteIndex === -1 ? "text-white" : "text-[#002f65]"}`}>Module 1 Final Quiz</p>
             {firstIncompleteIndex === -1 ? (
-              <p className="mt-0.5 text-xs text-white/65">All lessons complete — take the quiz</p>
+              <p className="mt-0.5 text-xs text-white/65">All lessons complete - take the quiz</p>
             ) : (
               <p className="mt-0.5 text-xs text-[#526b78]">Complete all lessons to unlock</p>
             )}
           </div>
-          {firstIncompleteIndex === -1 && <span className="shrink-0 text-sm font-semibold text-[#7bdcb5]">Start →</span>}
+          {firstIncompleteIndex === -1 && <span className="shrink-0 text-sm font-semibold text-[#7bdcb5]">Start</span>}
         </Link>
       )}
     </div>

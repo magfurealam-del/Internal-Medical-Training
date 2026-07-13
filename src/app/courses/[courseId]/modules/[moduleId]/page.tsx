@@ -13,7 +13,7 @@ export default async function ModulePage({ params }: { params: Promise<{ courseI
   const { data: claims } = await supabase.auth.getClaims();
   const isSignedIn = Boolean(claims?.claims?.sub);
   const [{ data: quiz }, completedIds, moduleProgress] = await Promise.all([
-    isSignedIn ? supabase.from("quizzes").select("id, title").eq("module_id", module.id).maybeSingle() : Promise.resolve({ data: null }),
+    supabase.from("quizzes").select("id, title").eq("module_id", module.id).maybeSingle(),
     getCompletedLessonIds(lessons.map((l) => l.id)),
     getModuleProgress(moduleId),
   ]);

@@ -93,7 +93,7 @@ export default function QuizForm({
         {review.length > 0 && (
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-[#002f65]">Question review</h2>
-            {state.review.map((item, index) => (
+            {review.map((item, index) => (
               <ReviewCard key={item.question_id} item={item} index={index} />
             ))}
           </section>
@@ -110,7 +110,7 @@ export default function QuizForm({
       {/* Progress bar */}
       <div
         className="rounded-2xl bg-[#edf7f8] p-5"
-        aria-label={`Quiz progress: ${answered.length} of ${questions.length} answered`}
+        aria-label={`Quiz progress: ${answeredCount} of ${questions.length} answered`}
       >
         <div className="flex justify-between text-sm font-medium text-[#526b78]">
           <span>{answeredCount} of {questions.length} answered</span>
@@ -128,7 +128,7 @@ export default function QuizForm({
       <div className="flex flex-col gap-5">
         {questions.map((question, questionIndex) => {
           const choices = items.filter((item) => item.question_id === question.question_id);
-          const isAnswered = answered.includes(question.question_id);
+          const isAnswered = question.question_id in answers;
           return (
             <fieldset
               key={question.question_id}
@@ -177,7 +177,7 @@ export default function QuizForm({
           disabled={pending || !allAnswered}
           className="flex-1 rounded-xl bg-[#002f65] px-6 py-3 font-semibold text-white transition hover:bg-[#001f43] disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {pending ? "Submitting…" : `Submit assessment (${answered.length}/${questions.length} answered)`}
+          {pending ? "Submitting…" : `Submit assessment (${answeredCount}/${questions.length} answered)`}
         </button>
       </div>
     </form>

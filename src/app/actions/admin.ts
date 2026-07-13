@@ -487,3 +487,56 @@ export async function reEnrollLearner(_prev: CourseActionState, formData: FormDa
   revalidatePath("/dashboard");
   return { success: true };
 }
+
+// ── User management ───────────────────────────────────────────────────────────
+
+export type UserActionState = { error?: string; success?: boolean; email?: string };
+
+export async function inviteUser(_prev: UserActionState, formData: FormData): Promise<UserActionState> {
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const role = String(formData.get("role") ?? "learner").trim();
+  if (!email) return { error: "Email is required." };
+  if (!["learner", "instructor", "administrator"].includes(role)) return { error: "Invalid role." };
+
+  const auth = await assertAdmin();
+  if ("error" in auth) return auth;
+
+  const adminClient = getSupabaseAdminClient();
+  const { data: invited, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email, {
+    data: { role },
+  });
+  if (inviteError) return { error: inviteError.message };
+
+  // Upsert profile — use anon client (auth is already asserted above)
+  if (invited?.user?.id) {
+    const auth = await assertAdmin();
+    if (!("error" in auth)) {
+      await auth.supabase.from("profiles").upsert({ id: invited.user.id, role, full_name: null }, { onConflict: "id" });
+    }
+  }
+
+  revalidatePath("/admin/users");
+  return { success: true, email };
+}
+
+export async function updateUserRole(_prev: UserActionState, formData: FormData): Promise<UserActionState> {
+  const userId = String(formData.get("userId") ?? "");
+  const role = String(formData.get("role") ?? "").trim();
+  if (!userId || !["learner", "instructor", "administrator"].includes(role)) return { error: "Invalid input." };
+
+  const auth = await assertAdmin();
+  if ("error" in auth) return auth;
+
+  const adminClient = getSupabaseAdminClient();
+  const { error: metaError } = await adminClient.auth.admin.updateUserById(userId, {
+    app_metadata: { role },
+  });
+  if (metaError) return { error: metaError.message };
+
+  const { supabase } = auth;
+  const { error: profileError } = await supabase.from("profiles").update({ role }).eq("id", userId);
+  if (profileError) return { error: profileError.message };
+
+  revalidatePath("/admin/users");
+  return { success: true };
+}

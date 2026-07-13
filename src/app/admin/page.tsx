@@ -107,6 +107,16 @@ export default async function AdminPage() {
           </div>
         </Link>
         <Link
+          href="/admin/users"
+          className="flex items-center gap-4 rounded-2xl bg-white p-5 ring-1 ring-[#d5e9ed] transition hover:ring-[#007c8b]"
+        >
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#edf7f8] text-xl">👥</span>
+          <div>
+            <p className="font-semibold text-[#002f65]">User management</p>
+            <p className="mt-0.5 text-xs text-[#526b78]">Invite staff and manage roles</p>
+          </div>
+        </Link>
+        <Link
           href="/courses"
           className="flex items-center gap-4 rounded-2xl bg-white p-5 ring-1 ring-[#d5e9ed] transition hover:ring-[#007c8b]"
         >

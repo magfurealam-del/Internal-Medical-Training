@@ -36,7 +36,8 @@ export async function createModule(_previousState: CourseActionState, formData: 
   const description = String(formData.get("description") ?? "").trim();
   if (!courseId || !title) return { error: "Module title is required." };
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.from("modules").insert({ course_id: courseId, title, description: description || null, sort_order: Number(formData.get("sortOrder") ?? 0) });
+  const { count } = await supabase.from("modules").select("*", { count: "exact", head: true }).eq("course_id", courseId);
+  const { error } = await supabase.from("modules").insert({ course_id: courseId, title, description: description || null, sort_order: (count ?? 0) });
   if (error) return { error: error.message };
   revalidatePath(`/admin/courses/${courseId}`);
   return { success: true };
@@ -50,7 +51,8 @@ export async function createLesson(_previousState: CourseActionState, formData: 
   const contentPath = String(formData.get("contentPath") ?? "").trim();
   if (!courseId || !moduleId || !title || !slug || !contentPath) return { error: "Lesson title, slug, and content path are required." };
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.from("lessons").insert({ module_id: moduleId, title, slug, content_path: contentPath, sort_order: Number(formData.get("sortOrder") ?? 0) });
+  const { count } = await supabase.from("lessons").select("*", { count: "exact", head: true }).eq("module_id", moduleId);
+  const { error } = await supabase.from("lessons").insert({ module_id: moduleId, title, slug, content_path: contentPath, sort_order: (count ?? 0) });
   if (error) return { error: error.message };
   revalidatePath(`/admin/courses/${courseId}`);
   return { success: true };
@@ -328,7 +330,8 @@ export async function createQuiz(_prev: CourseActionState, formData: FormData): 
   if (!courseId || !title) return { error: "Quiz title is required." };
   if (passPercentage < 1 || passPercentage > 100) return { error: "Pass mark must be between 1 and 100." };
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.from("quizzes").insert({ course_id: courseId, title, pass_percentage: passPercentage, sort_order: 0 });
+  const { count } = await supabase.from("quizzes").select("*", { count: "exact", head: true }).eq("course_id", courseId);
+  const { error } = await supabase.from("quizzes").insert({ course_id: courseId, title, pass_percentage: passPercentage, sort_order: (count ?? 0) });
   if (error) return { error: error.message };
   revalidatePath(`/admin/courses/${courseId}`);
   return { success: true };
@@ -343,11 +346,10 @@ export async function createQuestion(_prev: QuizItemState, formData: FormData): 
   const explanation = String(formData.get("explanation") ?? "").trim();
   if (!quizId || !prompt) return { error: "Question prompt is required." };
   const supabase = await createSupabaseServerClient();
-  const { data: existing } = await supabase.from("questions").select("id").eq("quiz_id", quizId).order("sort_order", { ascending: false }).limit(1);
-  const nextOrder = ((existing ?? [])[0] as { id: string } | undefined) ? 0 : 0;
+  const { count } = await supabase.from("questions").select("*", { count: "exact", head: true }).eq("quiz_id", quizId);
   const { data, error } = await supabase
     .from("questions")
-    .insert({ quiz_id: quizId, prompt, explanation: explanation || null, sort_order: nextOrder })
+    .insert({ quiz_id: quizId, prompt, explanation: explanation || null, sort_order: (count ?? 0) })
     .select("id")
     .maybeSingle();
   if (error) return { error: error.message };

@@ -1,4 +1,4 @@
-# Module 1 — From Intact Skin to Wound Depth
+# From Skin Integrity to Wound Depth
 
 **Vault source:** Course 1, Theoretical Module 1, Slides 1–8; Course 1 wound-assessment materials  
 **Primary mechanism:** wound depth is a map of lost structure and lost function.

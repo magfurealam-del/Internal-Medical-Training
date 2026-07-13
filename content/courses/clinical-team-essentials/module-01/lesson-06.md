@@ -1,4 +1,4 @@
-# Module 1 — Skin Integrity, Aging, Diabetes, and Fragility
+# Aging, Diabetes, and Skin Fragility
 
 **Vault source:** Course 1, Theoretical Module 1, Slide 7 and related skin-integrity material  
 **Primary mechanism:** aging and systemic disease shift the balance between tissue stress and repair capacity.

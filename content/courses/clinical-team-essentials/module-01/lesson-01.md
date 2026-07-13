@@ -1,4 +1,4 @@
-# Module 1 — Skin as a Living Barrier System
+# Skin as a Living Organ
 
 **Vault source:** Course 1, Theoretical Module 1, Slides 1–8  
 **Primary mechanism:** intact skin prevents tissue injury and controls the transition from external exposure to internal inflammation.

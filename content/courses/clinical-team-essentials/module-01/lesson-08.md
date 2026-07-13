@@ -1,4 +1,4 @@
-# Module 1 — Integrated Skin-Anatomy Case Conference
+# Integrated Case Conference
 
 **Vault source:** Course 1, Theoretical Module 1; Wound Care Course case-study and assessment materials  
 **Purpose:** integrate anatomy, physiology, mechanism, assessment, and documentation before moving to wound-healing biology.

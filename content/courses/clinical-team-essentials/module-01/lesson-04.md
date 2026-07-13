@@ -1,4 +1,4 @@
-# Module 1 — Subcutaneous Tissue: Cushion, Energy, and Pressure Transmission
+# Subcutaneous Tissue: Cushioning and Pressure
 
 **Vault source:** Course 1, Theoretical Module 1, Slide 5  
 **Primary mechanism:** subcutaneous tissue changes how external force reaches deeper tissues and how the body insulates, stores energy, and protects structures.

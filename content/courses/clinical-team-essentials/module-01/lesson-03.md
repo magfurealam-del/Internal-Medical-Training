@@ -1,4 +1,4 @@
-# Module 1 — The Dermis: Strength, Elasticity, and Repair Infrastructure
+# Dermis: Strength and Repair
 
 **Vault source:** Course 1, Theoretical Module 1, Slides 4 and “Layers of the Dermis”  
 **Primary mechanism:** dermal structure determines tissue strength, elasticity, vascular supply, sensation, and the capacity to generate repair tissue.

@@ -1,4 +1,4 @@
-# Module 1 — The Epidermis: The External Defense System
+# Epidermis: The Surface Barrier
 
 **Vault source:** Course 1, Theoretical Module 1, Slides 2–3  
 **Primary mechanism:** the epidermis limits water loss, blocks chemical and microbial exposure, and continually renews the surface.

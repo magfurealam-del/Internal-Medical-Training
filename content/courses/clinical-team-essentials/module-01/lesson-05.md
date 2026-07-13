@@ -1,4 +1,4 @@
-# Module 1 — Skin Functions and the Wound Environment
+# Skin Functions and the Wound Environment
 
 **Vault source:** Course 1, Theoretical Module 1, Slide 6  
 **Primary mechanism:** skin functions operate as an integrated system; losing one function can destabilize several others.

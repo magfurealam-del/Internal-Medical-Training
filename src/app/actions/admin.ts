@@ -502,13 +502,12 @@ export async function inviteUser(_prev: UserActionState, formData: FormData): Pr
   if ("error" in auth) return auth;
 
   const adminClient = getSupabaseAdminClient();
-  const { data: invited, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email, {
-    data: { role },
-  });
+  const { data: invited, error: inviteError } = await adminClient.auth.admin.inviteUserByEmail(email);
   if (inviteError) return { error: inviteError.message };
 
-  // Upsert profile — use anon client (auth is already asserted above)
   if (invited?.user?.id) {
+    // Set role in app_metadata (controls JWT claims) and profiles table
+    await adminClient.auth.admin.updateUserById(invited.user.id, { app_metadata: { role } });
     const auth = await assertAdmin();
     if (!("error" in auth)) {
       await auth.supabase.from("profiles").upsert({ id: invited.user.id, role, full_name: null }, { onConflict: "id" });

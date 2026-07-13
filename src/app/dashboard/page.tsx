@@ -9,6 +9,12 @@ export default async function DashboardPage() {
   const expiredCourses = enrolledCourses.filter(({ expired }) => expired);
   const activeCourses = enrolledCourses.filter(({ progress, expired }) => progress.percentage < 100 && !expired);
   const certificates = enrolledCourses.filter(({ certificate }) => certificate !== null);
+  const now = Date.now();
+  const atRiskCourses = activeCourses.filter(({ enrollment }) => {
+    if (!enrollment.expires_at) return false;
+    const daysLeft = (new Date(enrollment.expires_at).getTime() - now) / 86400000;
+    return daysLeft > 0 && daysLeft <= 7;
+  });
 
   // Best candidate for the hero: furthest along active course
   const continueLearning = activeCourses.sort((a, b) => b.progress.percentage - a.progress.percentage)[0] ?? null;
@@ -33,6 +39,25 @@ export default async function DashboardPage() {
           <p className="mt-2 text-3xl font-semibold text-[#002f65]">{certificates.length}</p>
         </div>
       </div>
+
+      {/* At-risk notice */}
+      {atRiskCourses.length > 0 && expiredCourses.length === 0 && (
+        <section className="mt-6 rounded-2xl bg-[#fffbeb] p-5 ring-1 ring-[#fcd34d]">
+          <p className="text-sm font-semibold text-[#92400e]">
+            ⏰ {atRiskCourses.length} course{atRiskCourses.length !== 1 ? "s are" : " is"} due within 7 days.
+          </p>
+          <ul className="mt-2 space-y-1">
+            {atRiskCourses.map(({ course, enrollment }) => {
+              const daysLeft = Math.ceil((new Date(enrollment.expires_at!).getTime() - now) / 86400000);
+              return (
+                <li key={course.id} className="text-sm text-[#92400e]">
+                  — {course.title} ({daysLeft} day{daysLeft !== 1 ? "s" : ""} left)
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
 
       {/* Expired notice */}
       {expiredCourses.length > 0 && (

@@ -47,6 +47,7 @@ export default function ChoiceForm({
       </button>
 
       {state.error && <p className="w-full text-xs text-red-700">{state.error}</p>}
+      {state.success && <p className="w-full text-xs font-medium text-green-700">✓ Choice added.</p>}
     </form>
   );
 }

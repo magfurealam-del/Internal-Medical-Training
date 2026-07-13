@@ -1,16 +1,28 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { PrintButton } from "./PrintButton";
 
 export default async function CertificatePage({ params }: { params: Promise<{ certificateId: string }> }) {
   const { certificateId } = await params;
   const supabase = await createSupabaseServerClient();
+
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const claims = claimsData?.claims;
+  if (!claims) redirect("/login");
+
   const { data: certificate } = await supabase
     .from("certificates")
     .select("certificate_number, issued_at, user_id, courses(title, description)")
     .eq("id", certificateId)
     .maybeSingle();
   if (!certificate) notFound();
+
+  // Only the certificate owner (or admin) may view it
+  const role = claims.app_metadata?.role as string | undefined;
+  if (certificate.user_id !== claims.sub && role !== "administrator" && role !== "instructor") {
+    notFound();
+  }
 
   const { data: profile } = await supabase
     .from("profiles")
@@ -32,12 +44,7 @@ export default async function CertificatePage({ params }: { params: Promise<{ ce
         <Link href="/certificates" className="text-sm font-medium text-[#007c8b]">
           ← All certificates
         </Link>
-        <button
-          onClick={() => window.print()}
-          className="rounded-xl bg-[#002f65] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#001f43]"
-        >
-          Print / Save PDF
-        </button>
+        <PrintButton />
       </div>
 
       {/* Certificate card */}

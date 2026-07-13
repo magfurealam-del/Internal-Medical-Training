@@ -15,6 +15,16 @@ export async function markLessonComplete(formData: FormData) {
   const userId = claims?.claims?.sub;
   if (!userId) return;
 
+  // Verify an active enrollment exists before writing progress
+  const { data: enrollment } = await supabase
+    .from("enrollments")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("course_id", courseId)
+    .eq("status", "active")
+    .maybeSingle();
+  if (!enrollment) return;
+
   await supabase.from("lesson_progress").upsert({
     user_id: userId,
     lesson_id: lessonId,

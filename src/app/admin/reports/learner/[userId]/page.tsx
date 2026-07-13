@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getLearnerDetail } from "@/lib/training/courses";
 import { requireTrainingStaff } from "@/lib/training/auth";
 import { formatDeadline, getDeadlineStatus, deadlineColors } from "@/lib/training/deadlines";
+import { AttemptHistory } from "./AttemptHistory";
 
 export default async function LearnerDetailPage({ params }: { params: Promise<{ userId: string }> }) {
   await requireTrainingStaff();
@@ -55,6 +56,7 @@ export default async function LearnerDetailPage({ params }: { params: Promise<{ 
             const deadlineLabel = formatDeadline(enrollment.expires_at);
             const deadlineStatus = getDeadlineStatus(enrollment.expires_at);
             const isComplete = progress_percentage === 100;
+            const enrolledDate = new Date(enrollment.assigned_at as string).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
 
             return (
               <section key={enrollment.id} className="rounded-2xl bg-white ring-1 ring-[#d5e9ed]">
@@ -62,9 +64,7 @@ export default async function LearnerDetailPage({ params }: { params: Promise<{ 
                 <div className="flex flex-wrap items-start justify-between gap-4 p-6">
                   <div>
                     <h2 className="text-xl font-semibold text-[#002f65]">{course_title}</h2>
-                    <p className="mt-1 text-sm text-[#526b78]">
-                      Enrolled {new Date(enrollment.assigned_at as string).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-                    </p>
+                    <p className="mt-1 text-sm text-[#526b78]">Enrolled {enrolledDate}</p>
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     {isComplete ? (
@@ -96,32 +96,82 @@ export default async function LearnerDetailPage({ params }: { params: Promise<{ 
                   <p className="mt-1 text-xs text-[#526b78]">{lessons_completed} of {lessons_total} required lessons complete</p>
                 </div>
 
-                {/* Module lesson breakdown */}
+                {/* Module + lesson + quiz breakdown */}
                 {moduleProgress.length > 0 && (
-                  <div className="mt-4 border-t border-[#edf4f5] px-6 pb-6">
-                    <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-[#526b78]">Lessons</p>
-                    <div className="mt-3 space-y-1">
-                      {moduleProgress.map(({ module: mod, lessons }) => (
-                        <div key={mod.id}>
-                          <p className="mt-3 text-xs font-semibold text-[#007c8b]">{mod.title}</p>
-                          {lessons.map((lesson) => (
-                            <div key={lesson.id} className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
-                              {lesson.completed_at ? (
-                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#e4f7ec] text-xs text-[#145c36]">✓</span>
-                              ) : (
-                                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#f0f4f5] text-xs text-[#b0c8d0]">○</span>
-                              )}
-                              <span className={lesson.completed_at ? "text-[#002f65]" : "text-[#526b78]"}>{lesson.title}</span>
-                              {lesson.completed_at && (
-                                <span className="ml-auto text-xs text-[#b0c8d0]">
-                                  {new Date(lesson.completed_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                  <div className="mt-4 border-t border-[#edf4f5] px-6 pb-6 space-y-5">
+                    {moduleProgress.map(({ module: mod, lessons, quiz }) => {
+                      const requiredCount = lessons.filter((l) => l.is_required).length;
+                      const requiredDone = lessons.filter((l) => l.is_required && l.completed_at).length;
+
+                      return (
+                        <div key={mod.id} className="pt-4">
+                          {/* Module title row */}
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="text-sm font-semibold text-[#002f65]">{mod.title}</p>
+                            <p className="text-xs text-[#526b78]">{requiredDone}/{requiredCount} lessons</p>
+                          </div>
+
+                          {/* Lessons */}
+                          <div className="mt-2 space-y-0.5">
+                            {lessons.map((lesson) => (
+                              <div key={lesson.id} className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                                {lesson.completed_at ? (
+                                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#e4f7ec] text-xs text-[#145c36]">✓</span>
+                                ) : (
+                                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#f0f4f5] text-xs text-[#b0c8d0]">○</span>
+                                )}
+                                <span className={lesson.completed_at ? "text-[#002f65]" : "text-[#526b78]"}>
+                                  {lesson.title}
                                 </span>
-                              )}
+                                {!lesson.is_required && (
+                                  <span className="rounded px-1.5 py-0.5 text-[10px] font-medium text-[#b0c8d0] ring-1 ring-[#d5e9ed]">optional</span>
+                                )}
+                                {lesson.completed_at && (
+                                  <span className="ml-auto text-xs text-[#b0c8d0]">
+                                    {new Date(lesson.completed_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Module quiz result — co-located with its module */}
+                          {quiz && (
+                            <div className={`mt-3 flex items-center justify-between rounded-xl px-4 py-3 text-sm ${
+                              quiz.latestAttempt?.passed
+                                ? "bg-[#f0faf5] ring-1 ring-[#a8dfc0]"
+                                : quiz.latestAttempt
+                                ? "bg-[#fff8f7] ring-1 ring-[#f5c6c0]"
+                                : "bg-[#f6feff] ring-1 ring-[#d5e9ed]"
+                            }`}>
+                              <div className="flex items-center gap-3">
+                                <span className="text-xs font-semibold text-[#526b78]">Assessment</span>
+                                <span className="font-medium text-[#002f65]">{quiz.title}</span>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                {quiz.latestAttempt ? (
+                                  <>
+                                    <span className="text-xs text-[#526b78]">
+                                      {quiz.latestAttempt.score_percentage}%
+                                      {quiz.attemptCount > 1 && (
+                                        <span className="ml-1 text-[#b0c8d0]">({quiz.attemptCount} attempts)</span>
+                                      )}
+                                    </span>
+                                    {quiz.latestAttempt.passed ? (
+                                      <span className="rounded-full bg-[#e4f7ec] px-2.5 py-1 text-xs font-semibold text-[#145c36]">Passed</span>
+                                    ) : (
+                                      <span className="rounded-full bg-[#fff0ef] px-2.5 py-1 text-xs font-semibold text-[#9d2c25]">Not passed</span>
+                                    )}
+                                  </>
+                                ) : (
+                                  <span className="text-xs text-[#b0c8d0]">Not attempted</span>
+                                )}
+                              </div>
                             </div>
-                          ))}
+                          )}
                         </div>
-                      ))}
-                    </div>
+                      );
+                    })}
                   </div>
                 )}
               </section>
@@ -130,40 +180,12 @@ export default async function LearnerDetailPage({ params }: { params: Promise<{ 
         </div>
       )}
 
-      {/* Quiz attempt history */}
+      {/* Full quiz attempt history with per-question breakdown */}
       {quizAttempts.length > 0 && (
         <section className="mt-8 rounded-2xl bg-white p-6 ring-1 ring-[#d5e9ed]">
-          <h2 className="text-xl font-semibold text-[#002f65]">Assessment history</h2>
-          <div className="mt-4 overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead className="border-b border-[#edf4f5] text-[#526b78]">
-                <tr>
-                  <th className="pb-3 text-left font-medium">Date</th>
-                  <th className="pb-3 text-left font-medium">Quiz</th>
-                  <th className="pb-3 text-left font-medium">Score</th>
-                  <th className="pb-3 text-left font-medium">Result</th>
-                </tr>
-              </thead>
-              <tbody>
-                {quizAttempts.map((attempt) => (
-                  <tr key={attempt.id} className="border-b border-[#edf4f5] last:border-0">
-                    <td className="py-3 pr-6 text-[#526b78]">
-                      {new Date(attempt.submitted_at as string).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
-                    </td>
-                    <td className="py-3 pr-6 font-mono text-xs text-[#526b78]">{attempt.quiz_id}</td>
-                    <td className="py-3 pr-6 font-semibold text-[#002f65]">{attempt.score_percentage}%</td>
-                    <td className="py-3">
-                      {attempt.passed ? (
-                        <span className="rounded-full bg-[#e4f7ec] px-2.5 py-1 text-xs font-semibold text-[#145c36]">Passed</span>
-                      ) : (
-                        <span className="rounded-full bg-[#fff0ef] px-2.5 py-1 text-xs font-semibold text-[#9d2c25]">Not passed</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <h2 className="text-xl font-semibold text-[#002f65]">Full assessment history</h2>
+          <p className="mt-1 text-sm text-[#526b78]">All attempts across all courses, newest first. Click an attempt to see the question-level breakdown.</p>
+          <AttemptHistory attempts={quizAttempts} />
         </section>
       )}
     </main>

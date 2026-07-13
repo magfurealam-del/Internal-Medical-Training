@@ -3,8 +3,10 @@ import { listProgressReports } from "@/lib/training/courses";
 import { requireTrainingStaff } from "@/lib/training/auth";
 import ProgressReportTable from "./ProgressReportTable";
 
-export default async function AdminReportsPage() {
+export default async function AdminReportsPage({ searchParams }: { searchParams: Promise<Record<string, string>> }) {
+
   await requireTrainingStaff();
+  const { course: courseFilter } = await searchParams;
   const rows = await listProgressReports();
 
   const total = rows.length;
@@ -130,7 +132,11 @@ export default async function AdminReportsPage() {
                   const rate = c.enrolled ? Math.round((c.completed / c.enrolled) * 100) : 0;
                   return (
                     <tr key={c.title} className="border-b border-[#edf4f5] last:border-0">
-                      <td className="px-5 py-4 font-medium text-[#002f65]">{c.title}</td>
+                      <td className="px-5 py-4 font-medium text-[#002f65]">
+                        <a href={`#learners?course=${encodeURIComponent(c.title)}`} className="hover:underline hover:text-[#007c8b]">
+                          {c.title}
+                        </a>
+                      </td>
                       <td className="px-5 py-4 text-[#526b78]">{c.enrolled}</td>
                       <td className="px-5 py-4 text-[#526b78]">{c.completed}</td>
                       <td className="px-5 py-4">
@@ -161,9 +167,9 @@ export default async function AdminReportsPage() {
       )}
 
       {/* Full learner table */}
-      <section className="mt-8">
+      <section className="mt-8" id="learners">
         <h2 className="text-xl font-semibold text-[#002f65]">All learners</h2>
-        <ProgressReportTable rows={rows} />
+        <ProgressReportTable rows={rows} initialCourseFilter={courseFilter ?? ""} />
       </section>
     </main>
   );

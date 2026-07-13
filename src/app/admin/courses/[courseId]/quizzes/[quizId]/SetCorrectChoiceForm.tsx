@@ -14,10 +14,10 @@ export default function SetCorrectChoiceForm({
   questionId: string;
   choiceId: string;
 }) {
-  const [, action, pending] = useActionState(setCorrectChoice, {} as QuizItemState);
+  const [state, action, pending] = useActionState(setCorrectChoice, {} as QuizItemState);
 
   return (
-    <form action={action}>
+    <form action={action} className="flex items-center gap-2">
       <input type="hidden" name="courseId" value={courseId} />
       <input type="hidden" name="quizId" value={quizId} />
       <input type="hidden" name="questionId" value={questionId} />
@@ -28,6 +28,8 @@ export default function SetCorrectChoiceForm({
       >
         {pending ? "Setting…" : "Set correct"}
       </button>
+      {state.error && <span className="text-xs text-red-700">{state.error}</span>}
+      {state.success && <span className="text-xs font-medium text-green-700">✓</span>}
     </form>
   );
 }

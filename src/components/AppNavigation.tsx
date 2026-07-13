@@ -18,6 +18,7 @@ function isActive(pathname: string, href: string) {
 
 function useUser() {
   const [name, setName] = useState<string | null>(null);
+  const [isStaff, setIsStaff] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -25,7 +26,8 @@ function useUser() {
     supabase.auth.getSession().then(({ data }) => {
       const user = data.session?.user;
       if (user) {
-        // Try profile full_name first, fall back to email
+        const role = user.app_metadata?.role as string | undefined;
+        setIsStaff(role === "administrator" || role === "instructor");
         supabase
           .from("profiles")
           .select("full_name")
@@ -41,7 +43,7 @@ function useUser() {
     });
   }, []);
 
-  return { name, loaded };
+  return { name, isStaff, loaded };
 }
 
 function initials(name: string) {
@@ -58,7 +60,7 @@ export function AppNavigation() {
   const [open, setOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const adminArea = pathname.startsWith("/admin");
-  const { name, loaded } = useUser();
+  const { name, isStaff, loaded } = useUser();
 
   async function signOut() {
     const supabase = createSupabaseBrowserClient();
@@ -90,7 +92,7 @@ export function AppNavigation() {
               </Link>
             ))}
 
-            {adminArea ? (
+            {isStaff && (adminArea ? (
               <Link href="/admin" className="ml-2 rounded-lg bg-[#123d69] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0b2b4f]">
                 Admin workspace
               </Link>
@@ -98,7 +100,7 @@ export function AppNavigation() {
               <Link href="/admin" className="ml-2 rounded-lg border border-[#d9e9ec] px-4 py-2.5 text-sm font-medium text-[#527084] transition hover:border-[#86bdc6] hover:text-[#123d69]">
                 Staff area
               </Link>
-            )}
+            ))}
 
             {/* User avatar / menu */}
             {loaded && name && (
@@ -166,14 +168,16 @@ export function AppNavigation() {
                   <span className="mt-0.5 block text-xs text-[#78909d]">{link.description}</span>
                 </Link>
               ))}
-              <Link
-                href="/admin"
-                onClick={() => setOpen(false)}
-                className="block rounded-xl px-4 py-3 text-[#527084] hover:bg-[#f4fafb]"
-              >
-                <span className="block text-sm font-semibold">Staff area</span>
-                <span className="mt-0.5 block text-xs text-[#78909d]">Admin and instructor tools</span>
-              </Link>
+              {isStaff && (
+                <Link
+                  href="/admin"
+                  onClick={() => setOpen(false)}
+                  className="block rounded-xl px-4 py-3 text-[#527084] hover:bg-[#f4fafb]"
+                >
+                  <span className="block text-sm font-semibold">Staff area</span>
+                  <span className="mt-0.5 block text-xs text-[#78909d]">Admin and instructor tools</span>
+                </Link>
+              )}
             </div>
 
             <div className="mt-3 border-t border-[#edf2f3] pt-3 space-y-2">

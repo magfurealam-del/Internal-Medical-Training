@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type ReportRow = {
   id: string;
@@ -17,11 +17,23 @@ type ReportRow = {
   expires_at: string | null;
   days_until_expiry: number | null;
   at_risk: boolean;
+  assigned_at?: string | null;
 };
 
-export default function ProgressReportTable({ rows }: { rows: ReportRow[] }) {
-  const [query, setQuery] = useState("");
+export default function ProgressReportTable({
+  rows,
+  initialCourseFilter = "",
+}: {
+  rows: ReportRow[];
+  initialCourseFilter?: string;
+}) {
+  const [query, setQuery] = useState(initialCourseFilter);
   const [status, setStatus] = useState("all");
+
+  // Sync when the server-side course filter changes (e.g. clicking a course link)
+  useEffect(() => {
+    if (initialCourseFilter) setQuery(initialCourseFilter);
+  }, [initialCourseFilter]);
 
   const filteredRows = useMemo(
     () =>
@@ -66,13 +78,22 @@ export default function ProgressReportTable({ rows }: { rows: ReportRow[] }) {
             <option value="complete">Complete</option>
           </select>
         </label>
+        {query && (
+          <button
+            type="button"
+            onClick={() => { setQuery(""); setStatus("all"); }}
+            className="rounded-xl border border-[#d5e9ed] px-4 py-3 text-sm text-[#526b78] hover:border-[#007c8b] hover:text-[#002f65]"
+          >
+            Clear filter
+          </button>
+        )}
       </div>
 
       <div className="mt-4 overflow-x-auto rounded-2xl bg-white ring-1 ring-[#d5e9ed]">
         <table className="min-w-full text-left text-sm">
           <thead className="border-b border-[#d5e9ed] text-[#526b78]">
             <tr>
-              {["Learner", "Course", "Progress", "Deadline", "Latest score", "Assessment", "Certificate", ""].map(
+              {["Learner", "Course", "Enrolled", "Progress", "Deadline", "Latest score", "Assessment", "Certificate", ""].map(
                 (h) => <th key={h} className="px-5 py-4 font-medium">{h}</th>,
               )}
             </tr>
@@ -82,6 +103,11 @@ export default function ProgressReportTable({ rows }: { rows: ReportRow[] }) {
               <tr key={row.id} className={`border-b border-[#edf4f5] last:border-0 ${row.at_risk ? "bg-[#fffaf4]" : ""}`}>
                 <td className="px-5 py-4 font-medium text-[#002f65]">{row.learner_name}</td>
                 <td className="px-5 py-4 text-[#526b78]">{row.course_title}</td>
+                <td className="px-5 py-4 text-xs text-[#526b78]">
+                  {row.assigned_at
+                    ? new Date(row.assigned_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+                    : <span className="text-[#b0c8d0]">—</span>}
+                </td>
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-2">
                     <div className="h-1.5 w-16 rounded-full bg-[#d9f2f4]">

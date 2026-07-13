@@ -107,7 +107,10 @@ export default async function DashboardPage() {
               Your administrator will assign training courses to you.<br />
               Check back here once you have been enrolled.
             </p>
-            <a href="mailto:" className="mt-5 inline-block text-sm font-semibold text-[#007c8b]">
+            <a
+              href={`mailto:${process.env.NEXT_PUBLIC_COORDINATOR_EMAIL ?? "training@ekagra.com"}`}
+              className="mt-5 inline-block text-sm font-semibold text-[#007c8b]"
+            >
               Contact your training coordinator →
             </a>
           </div>

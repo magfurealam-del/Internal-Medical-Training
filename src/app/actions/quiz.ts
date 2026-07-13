@@ -1,6 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { sendCertificateEmail } from "@/lib/training/email";
 
 export async function submitQuiz(_previousState: QuizState, formData: FormData): Promise<QuizState> {
   const quizId = String(formData.get("quizId") ?? "");
@@ -19,7 +20,34 @@ export async function submitQuiz(_previousState: QuizState, formData: FormData):
   let certificateId: string | undefined;
   if (result.passed) {
     const certificate = await supabase.rpc("issue_certificate", { p_attempt_id: result.attempt_id });
-    if (!certificate.error) certificateId = certificate.data as string;
+    if (!certificate.error) {
+      certificateId = certificate.data as string;
+      // Send certificate email — best-effort, don't block the response
+      try {
+        const { data: claimsData } = await supabase.auth.getClaims();
+        const userId = claimsData?.claims?.sub;
+        if (userId && certificateId) {
+          const [{ data: profile }, { data: userRecord }, { data: quiz }] = await Promise.all([
+            supabase.from("profiles").select("full_name").eq("id", userId).maybeSingle(),
+            supabase.auth.admin.getUserById(userId),
+            supabase.from("quizzes").select("courses(title)").eq("id", quizId).maybeSingle(),
+          ]);
+          const email = userRecord?.user?.email;
+          const rawCourses = quiz?.courses as unknown;
+          const courseTitle = (Array.isArray(rawCourses) ? (rawCourses[0] as { title: string } | undefined)?.title : (rawCourses as { title: string } | null)?.title);
+          if (email && courseTitle) {
+            await sendCertificateEmail({
+              to: email,
+              learnerName: profile?.full_name ?? "there",
+              courseTitle,
+              certificateId,
+            });
+          }
+        }
+      } catch {
+        // Email failure must not block the quiz result
+      }
+    }
   }
 
   // Fetch post-submission review — safe because the attempt is already scored

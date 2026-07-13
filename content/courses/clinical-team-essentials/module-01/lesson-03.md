@@ -42,6 +42,18 @@ When dermis is lost, continuity can return without recreating original architect
 
 Further reading: [NCBI dermis histology](https://www.ncbi.nlm.nih.gov/books/NBK535346/) and [NCBI wound assessment](https://www.ncbi.nlm.nih.gov/books/NBK482198/).
 
+## Faculty teaching map
+
+- **Teach the dermis as four linked systems:**
+  - Collagen and elastin provide strength and recoil.
+  - Vessels provide oxygen, nutrients, heat exchange, and repair support.
+  - Nerves provide pain, temperature, touch, and pressure information.
+  - Lymphatics and matrix regulate fluid movement and tissue hydration.
+- **Explain why a clean wound may still be unsafe:**
+  - The surface may be free of obvious debris while the dermal scaffold remains weak.
+  - A scar may restore continuity without recreating normal tensile strength.
+  - Perfusion, sensation, and edema must be assessed separately from cleanliness.
+
 ## Take-home rule
 
 The dermis is the repair infrastructure. A wound cannot be understood by surface appearance alone if the dermal matrix, vessels, nerves, or appendages are compromised.

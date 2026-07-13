@@ -42,6 +42,21 @@ Do not treat age or diabetes as the wound diagnosis. Treat them as modifiers tha
 
 Further reading: [NCBI wound assessment](https://www.ncbi.nlm.nih.gov/books/NBK482198/) and [WHO diabetic-foot assessment guidance](https://extranet.who.int/ncdccs/Data/FJI_D1_Diabetes-Management-Guideline_3rd-Edition-2012.pdf).
 
+## Faculty teaching map
+
+- **Aging reduces reserve:**
+  - Thinner tissue tolerates less shear and adhesive force.
+  - Reduced collagen, elasticity, vascular response, and cushioning slow recovery.
+  - Dryness and edema may coexist, creating both cracking and fragility.
+- **Diabetes changes several systems:**
+  - Neuropathy alters protective sensation.
+  - Perfusion and immune response may be impaired.
+  - Repair may be delayed even when the wound looks small.
+  - Callus and footwear may reveal repetitive mechanical loading.
+- **Fragility requires two questions:**
+  - What makes the tissue vulnerable?
+  - What force or exposure caused the breakdown?
+
 ## Take-home rule
 
 Risk is the interaction between tissue vulnerability and applied stress. Prevention reduces stress; treatment addresses the injury and the mechanism that created it.

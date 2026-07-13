@@ -51,6 +51,21 @@ Skin continuously controls water movement, mechanical load, temperature, chemica
 
 Further reading: [NCBI skin anatomy](https://www.ncbi.nlm.nih.gov/books/NBK441980/) and [DermNet skin barrier function](https://dermnetnz.org/topics/skin-barrier-function).
 
+## Faculty teaching map
+
+- **Start with the clinical problem:**
+  - A dressing cannot correct an unrecognized pressure, perfusion, sensory, moisture, or inflammatory mechanism.
+  - The first task is to identify the structure involved and the function that may be lost.
+- **Use the three-layer map:**
+  - Epidermis: barrier and renewal.
+  - Dermis: strength, vessels, nerves, lymphatics, and repair matrix.
+  - Subcutaneous tissue: cushioning, insulation, and force distribution.
+- **Ask four questions at every bedside:**
+  - What is directly visible?
+  - Which layer may be involved?
+  - What function may be lost?
+  - What assessment or escalation is required next?
+
 ## Module 1 pathway
 
 This module is a complete, multi-page anatomy sequence. Continue through the lesson list to connect the skin barrier to epidermal renewal, dermal strength, subcutaneous cushioning, wound-environment control, age- and diabetes-related vulnerability, anatomy-based depth assessment, and integrated documentation.

@@ -35,6 +35,20 @@ For every pressure-related lesion ask where force is applied, how long it lasts,
 
 Further reading: [DermNet skin barrier function](https://dermnetnz.org/topics/skin-barrier-function) and [NCBI wound assessment](https://www.ncbi.nlm.nih.gov/books/NBK482198/).
 
+## Faculty teaching map
+
+- **Teach force in three dimensions:**
+  - Compression pushes tissue between an external surface and a deeper structure.
+  - Friction acts at the skin surface.
+  - Shear occurs when deeper tissue and skin move in different directions.
+- **Teach why duration matters:**
+  - A brief force may be tolerated.
+  - Repeated or prolonged force can impair microcirculation.
+  - Immobility, reduced sensation, and poor repositioning increase exposure time.
+- **Teach what to document:**
+  - Position, mobility, support surface, footwear, bony prominence, callus, edema, and sensation.
+  - Whether the patient can reposition or offload independently.
+
 ## Take-home rule
 
 A skin lesion may be the visible endpoint of deeper mechanical injury. Always ask what force or pressure is acting below the surface.

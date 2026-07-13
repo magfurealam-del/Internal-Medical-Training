@@ -39,6 +39,21 @@ Moisture must be balanced, not maximized. Excess exudate macerates the edge and 
 
 Further reading: [DermNet normal wound healing](https://dermnetnz.org/cme/wound-healing/normal-wound-healing) and [NCBI skin substitutes background](https://www.ncbi.nlm.nih.gov/books/NBK554225/).
 
+## Faculty teaching map
+
+- **Protection:**
+  - Blocks mechanical, chemical, thermal, microbial, and ultraviolet threats.
+  - Fails when the surface is open, excessively dry, macerated, or repeatedly traumatized.
+- **Sensation:**
+  - Warns the patient about pressure, heat, pain, and injury.
+  - Fails silently in neuropathy, allowing continued loading.
+- **Temperature and fluid control:**
+  - Uses dermal blood flow and sweating to regulate heat.
+  - Uses the epidermal barrier to limit water loss.
+- **Immune surveillance:**
+  - Uses the intact barrier, resident defenses, and immune cells.
+  - Becomes less effective when tissue is open, devitalized, or inflamed.
+
 ## Take-home rule
 
 Wound care is often the restoration or compensation of lost skin functions, not simply coverage of a hole.

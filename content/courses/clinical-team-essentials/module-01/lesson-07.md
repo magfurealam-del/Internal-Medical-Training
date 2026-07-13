@@ -44,6 +44,21 @@ Document location, orientation, length, width, depth, tissue, edge, periwound, u
 
 Further reading: [NCBI wound assessment](https://www.ncbi.nlm.nih.gov/books/NBK482198/) and [NCBI wound-healing tissue response](https://www.ncbi.nlm.nih.gov/books/NBK3938/).
 
+## Faculty teaching map
+
+- **Describe the wound in layers:**
+  - Surface: intact, eroded, blistered, macerated, or denuded.
+  - Wound bed: epithelial tissue, granulation, slough, eschar, fat, tendon, muscle, or bone if visible.
+  - Edge and periwound: rolled, undermined, macerated, callused, inflamed, fragile, or intact.
+- **Separate observation from interpretation:**
+  - “Yellow tissue visible” is an observation.
+  - “Slough” is an interpretation that should be used when the appearance supports it.
+  - “Infected” requires more than color alone.
+- **State uncertainty safely:**
+  - Use “not visualized” when tissue is covered.
+  - Use “unable to assess” when pain, bleeding, or safety limits examination.
+  - Escalate suspected deep or neurovascular involvement.
+
 ## Take-home rule
 
 Size is one dimension. Depth and the function of the structures involved often determine risk more than surface area alone.

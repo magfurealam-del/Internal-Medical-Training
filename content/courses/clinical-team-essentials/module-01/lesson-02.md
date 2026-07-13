@@ -56,6 +56,21 @@ In partial-thickness injury, viable edge keratinocytes and cells associated with
 
 Further reading: [DermNet skin barrier function](https://dermnetnz.org/topics/skin-barrier-function) and [NCBI epidermis anatomy](https://www.ncbi.nlm.nih.gov/books/NBK470464/).
 
+## Faculty teaching map
+
+- **Teach the epidermis from deep to superficial:**
+  - The basal layer supplies renewing keratinocytes.
+  - Maturing cells move upward and change their structure.
+  - The stratum corneum forms the final water- and irritant-control surface.
+- **Connect cell biology to observation:**
+  - Keratinocyte injury appears as denudement, fissure, blistering, or delayed resurfacing.
+  - Melanin affects appearance, but color alone does not diagnose infection or ischemia.
+  - Langerhans cells support immune surveillance; barrier failure increases exposure to microbes and irritants.
+- **Explain the barrier as a system:**
+  - Corneocytes provide the structural “bricks.”
+  - Lipids provide much of the “mortar.”
+  - Water loss, cleansing, friction, exudate, and adhesive trauma can disrupt both.
+
 ## Take-home rule
 
 The epidermis is an active renewing barrier. Any factor that increases surface damage, water loss, or microbial access can become an upstream wound-healing problem.

@@ -63,6 +63,20 @@ Ask how the force occurred, whether the flap is viable, whether deeper injury or
 
 Pain with coolness or color asymmetry requires perfusion assessment under local policy. A clean appearance must not reassure the team falsely.
 
+## Faculty case-conference method
+
+- **Pass 1 - describe:**
+  - Record what is visible without diagnosing.
+  - Include site, laterality, dimensions, tissue, edge, periwound, drainage, pain, and sensation.
+- **Pass 2 - explain:**
+  - Identify plausible pressure, shear, moisture, perfusion, sensory, inflammatory, or traumatic mechanisms.
+  - Name evidence supporting each mechanism.
+- **Pass 3 - challenge:**
+  - Ask what dangerous alternative explanation remains possible.
+  - Identify missing information that would change the plan.
+- **Pass 4 - communicate:**
+  - State the next assessment, protection step, monitoring plan, and escalation pathway.
+
 ## Image references
 
 - [Anatomy of the skin — Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Anatomy_of_the_skin.jpg)

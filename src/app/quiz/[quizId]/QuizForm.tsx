@@ -18,13 +18,24 @@ export default function QuizForm({
   returnHref: string;
 }) {
   const [state, formAction, pending] = useActionState(submitQuiz, initialState);
-  const [answered, setAnswered] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const questions = Array.from(new Map(items.map((item) => [item.question_id, item])).values());
-  const progress = answered.length === 0 ? 0 : Math.round((answered.length / questions.length) * 100);
-  const allAnswered = answered.length === questions.length;
+  const answeredCount = Object.keys(answers).length;
+  const progress = answeredCount === 0 ? 0 : Math.round((answeredCount / questions.length) * 100);
+  const allAnswered = answeredCount === questions.length;
+  const serialisedAnswers = JSON.stringify(
+    Object.entries(answers).map(([question_id, choice_id]) => ({ question_id, choice_id }))
+  );
 
   if (state.result) {
     const { passed, score_percentage, certificate_id } = state.result;
+    const review = state.review ?? [];
+    const correctCount = review.filter((item) => item.is_correct).length;
+    const missedCount = review.length - correctCount;
+    const analysis = passed
+      ? missedCount === 0
+        ? "You demonstrated complete mastery of this assessment.": "Your core understanding is strong. Review the missed mechanisms before moving to the next module."
+      : "The result is below the pass mark. Use the explanations and remediation links in the lesson sequence, then retake the assessment.";
     return (
       <div className="mt-8 space-y-6">
         {/* Score card */}
@@ -41,6 +52,16 @@ export default function QuizForm({
               : `You need ${passPercentage}% to pass. Review the questions below, then retry.`}
           </p>
         </div>
+
+        <section className="rounded-2xl bg-white p-6 ring-1 ring-[#d5e9ed]">
+          <h2 className="text-xl font-semibold text-[#002f65]">Results and analysis</h2>
+          <p className="mt-2 text-sm leading-6 text-[#526b78]">{analysis}</p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-xl bg-[#edf7f8] p-4"><p className="text-xs uppercase tracking-[0.14em] text-[#526b78]">Score</p><p className="mt-1 text-2xl font-semibold text-[#002f65]">{score_percentage}%</p></div>
+            <div className="rounded-xl bg-[#f0faf5] p-4"><p className="text-xs uppercase tracking-[0.14em] text-[#526b78]">Correct</p><p className="mt-1 text-2xl font-semibold text-[#145c36]">{correctCount}</p></div>
+            <div className="rounded-xl bg-[#fff8f7] p-4"><p className="text-xs uppercase tracking-[0.14em] text-[#526b78]">Review</p><p className="mt-1 text-2xl font-semibold text-[#9d2c25]">{missedCount}</p></div>
+          </div>
+        </section>
 
         {/* Actions */}
         <div className="flex flex-col gap-3 sm:flex-row">
@@ -69,7 +90,7 @@ export default function QuizForm({
         </div>
 
         {/* Answer review */}
-        {state.review && state.review.length > 0 && (
+        {review.length > 0 && (
           <section className="space-y-4">
             <h2 className="text-xl font-semibold text-[#002f65]">Question review</h2>
             {state.review.map((item, index) => (
@@ -84,7 +105,7 @@ export default function QuizForm({
   return (
     <form action={formAction} className="mt-8 flex flex-col gap-5">
       <input type="hidden" name="quizId" value={quizId} />
-      <input type="hidden" name="answers" id="answers" value="[]" />
+      <input type="hidden" name="answers" value={serialisedAnswers} />
 
       {/* Progress bar */}
       <div
@@ -92,7 +113,7 @@ export default function QuizForm({
         aria-label={`Quiz progress: ${answered.length} of ${questions.length} answered`}
       >
         <div className="flex justify-between text-sm font-medium text-[#526b78]">
-          <span>{answered.length} of {questions.length} answered</span>
+          <span>{answeredCount} of {questions.length} answered</span>
           <span>{progress}%</span>
         </div>
         <div className="mt-3 h-2 rounded-full bg-white">
@@ -129,15 +150,7 @@ export default function QuizForm({
                       value={choice.choice_id}
                       className="accent-[#007c8b]"
                       onChange={() => {
-                        const hidden = document.getElementById("answers") as HTMLInputElement;
-                        const current = JSON.parse(hidden.value) as Array<{ question_id: string; choice_id: string }>;
-                        hidden.value = JSON.stringify([
-                          ...current.filter((a) => a.question_id !== question.question_id),
-                          { question_id: question.question_id, choice_id: choice.choice_id },
-                        ]);
-                        setAnswered((prev) =>
-                          prev.includes(question.question_id) ? prev : [...prev, question.question_id],
-                        );
+                        setAnswers((prev) => ({ ...prev, [question.question_id]: choice.choice_id }));
                       }}
                     />
                     {choice.choice_text}

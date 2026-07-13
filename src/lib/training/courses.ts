@@ -322,13 +322,114 @@ export async function getNextLesson(courseId: string): Promise<{ lesson: Lesson;
     supabase.from("lesson_progress").select("lesson_id").eq("user_id", userId).not("completed_at", "is", null),
   ]);
 
+  const moduleIds = (modules ?? []).map((m) => m.id);
+  if (!moduleIds.length) return null;
+
+  const { data: lessons } = await supabase
+    .from("lessons")
+    .select("id, module_id, title, slug, content_path, sort_order, is_required")
+    .in("module_id", moduleIds)
+    .order("sort_order");
+
   const completedIds = new Set((progress ?? []).map((p) => p.lesson_id));
-  for (const mod of modules ?? []) {
-    const { data: lessons } = await supabase.from("lessons").select("id, module_id, title, slug, content_path, sort_order, is_required").eq("module_id", mod.id).order("sort_order");
-    const next = (lessons ?? []).find((l) => !completedIds.has(l.id));
+  for (const mod of (modules ?? []).sort((a, b) => a.sort_order - b.sort_order)) {
+    const modLessons = (lessons ?? []).filter((l) => l.module_id === mod.id).sort((a, b) => a.sort_order - b.sort_order);
+    const next = modLessons.find((l) => !completedIds.has(l.id));
     if (next) return { lesson: next as Lesson, module: mod as Module };
   }
   return null;
+}
+
+export type CourseDetailData = {
+  course: Course;
+  modules: Array<Module & { lessons: Lesson[]; progress: { completed: number; total: number } }>;
+  progress: { completed: number; total: number; percentage: number };
+  nextLesson: { lesson: Lesson; module: Module } | null;
+  enrollment: { expires_at: string | null } | null;
+};
+
+export async function getCourseDetailData(courseId: string): Promise<CourseDetailData | null> {
+  const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+
+  const [{ data: course }, { data: modules }, { data: enrollment }] = await Promise.all([
+    supabase.from("courses").select("id, title, slug, description, status, content_version").eq("id", courseId).maybeSingle(),
+    supabase.from("modules").select("id, course_id, title, description, sort_order").eq("course_id", courseId).order("sort_order"),
+    userId
+      ? supabase.from("enrollments").select("expires_at").eq("user_id", userId).eq("course_id", courseId).maybeSingle()
+      : Promise.resolve({ data: null }),
+  ]);
+  if (!course) return null;
+
+  const moduleIds = (modules ?? []).map((m) => m.id);
+  const [{ data: allLessons }, { data: progressRows }] = await Promise.all([
+    moduleIds.length
+      ? supabase.from("lessons").select("id, module_id, title, slug, content_path, sort_order, is_required").in("module_id", moduleIds).order("sort_order")
+      : Promise.resolve({ data: [] }),
+    userId
+      ? supabase.from("lesson_progress").select("lesson_id").eq("user_id", userId).not("completed_at", "is", null)
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  const completedIds = new Set((progressRows ?? []).map((p) => p.lesson_id));
+  const sortedModules = (modules ?? []).sort((a, b) => a.sort_order - b.sort_order);
+
+  let totalRequired = 0;
+  let totalCompleted = 0;
+  let nextLesson: { lesson: Lesson; module: Module } | null = null;
+
+  const modulesWithProgress = sortedModules.map((mod) => {
+    const lessons = (allLessons ?? []).filter((l) => l.module_id === mod.id).sort((a, b) => a.sort_order - b.sort_order) as Lesson[];
+    const required = lessons.filter((l) => l.is_required);
+    const completed = required.filter((l) => completedIds.has(l.id)).length;
+    totalRequired += required.length;
+    totalCompleted += completed;
+    if (!nextLesson) {
+      const next = lessons.find((l) => !completedIds.has(l.id));
+      if (next) nextLesson = { lesson: next, module: mod as Module };
+    }
+    return { ...mod, lessons, progress: { completed, total: required.length } };
+  });
+
+  const percentage = totalRequired === 0 ? 0 : Math.round((totalCompleted / totalRequired) * 100);
+
+  return {
+    course: course as Course,
+    modules: modulesWithProgress,
+    progress: { completed: totalCompleted, total: totalRequired, percentage },
+    nextLesson,
+    enrollment: enrollment as { expires_at: string | null } | null,
+  };
+}
+
+export async function getCatalogueProgressBatch(courseIds: string[]): Promise<Map<string, { completed: number; total: number; percentage: number }>> {
+  if (!courseIds.length) return new Map();
+  const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+
+  const empty = new Map(courseIds.map((id) => [id, { completed: 0, total: 0, percentage: 0 }]));
+  if (!userId) return empty;
+
+  const [{ data: lessons }, { data: progress }] = await Promise.all([
+    supabase.from("lessons").select("id, modules!inner(course_id)").eq("is_required", true).in("modules.course_id", courseIds),
+    supabase.from("lesson_progress").select("lesson_id").eq("user_id", userId).not("completed_at", "is", null),
+  ]);
+
+  const completedIds = new Set((progress ?? []).map((p) => p.lesson_id));
+  const byCourse = new Map<string, { completed: number; total: number }>();
+  for (const lesson of lessons ?? []) {
+    const courseId = (lesson.modules as unknown as { course_id: string }).course_id;
+    if (!byCourse.has(courseId)) byCourse.set(courseId, { completed: 0, total: 0 });
+    const entry = byCourse.get(courseId)!;
+    entry.total++;
+    if (completedIds.has(lesson.id)) entry.completed++;
+  }
+  return new Map(courseIds.map((id) => {
+    const e = byCourse.get(id) ?? { completed: 0, total: 0 };
+    return [id, { ...e, percentage: e.total === 0 ? 0 : Math.round((e.completed / e.total) * 100) }];
+  }));
 }
 
 export async function getModuleProgress(moduleId: string) {

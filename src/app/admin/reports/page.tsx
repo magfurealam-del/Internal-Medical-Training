@@ -47,7 +47,7 @@ export default async function AdminReportsPage({ searchParams }: { searchParams:
           <h1 className="mt-3 text-5xl font-semibold tracking-tight text-[#002f65]">Learner progress</h1>
           <p className="mt-4 text-[#526b78]">Monitor lesson completion, assessment results, deadlines, and certificates.</p>
         </div>
-        <a href="/admin/reports/export" className="rounded-xl bg-[#002f65] px-5 py-3 text-sm font-semibold text-white">
+        <a href="/api/admin/reports/export" className="rounded-xl bg-[#002f65] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#001f43]">
           Download CSV
         </a>
       </div>

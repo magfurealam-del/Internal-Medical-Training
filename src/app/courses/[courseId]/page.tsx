@@ -1,39 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCourse, getCourseProgress, getModuleProgress, getNextLesson, listModules } from "@/lib/training/courses";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { getCourseDetailData } from "@/lib/training/courses";
 import { formatDeadline, getDeadlineStatus, deadlineColors, isExpired } from "@/lib/training/deadlines";
 
 export default async function CoursePage({ params }: { params: Promise<{ courseId: string }> }) {
   const { courseId } = await params;
-  const supabase = await createSupabaseServerClient();
-  const { data: claims } = await supabase.auth.getClaims();
-  const userId = claims?.claims?.sub;
+  const data = await getCourseDetailData(courseId);
+  if (!data) notFound();
 
-  const [course, modules, progress, next] = await Promise.all([
-    getCourse(courseId),
-    listModules(courseId),
-    getCourseProgress(courseId),
-    getNextLesson(courseId),
-  ]);
-  if (!course) notFound();
-
-  const enrollment = userId
-    ? await supabase
-        .from("enrollments")
-        .select("expires_at")
-        .eq("user_id", userId)
-        .eq("course_id", courseId)
-        .maybeSingle()
-        .then(({ data }) => data)
-    : null;
+  const { course, modules, progress, nextLesson, enrollment } = data;
   const deadlineLabel = formatDeadline(enrollment?.expires_at ?? null);
   const deadlineStatus = getDeadlineStatus(enrollment?.expires_at ?? null);
   const enrollmentExpired = progress.percentage < 100 && isExpired(enrollment?.expires_at ?? null);
-
-  const modulesWithProgress = await Promise.all(
-    modules.map(async (module) => ({ module, progress: await getModuleProgress(module.id) })),
-  );
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-16 lg:px-10">
@@ -65,9 +43,9 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
               </span>
             )}
           </div>
-          {next ? (
+          {nextLesson ? (
             <Link
-              href={`/courses/${courseId}/modules/${next.module.id}/lessons/${next.lesson.id}`}
+              href={`/courses/${courseId}/modules/${nextLesson.module.id}/lessons/${nextLesson.lesson.id}`}
               className="shrink-0 rounded-xl bg-[#007c8b] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#006b78]"
             >
               {progress.percentage === 0 ? "Start course" : "Continue learning"}
@@ -88,25 +66,26 @@ export default async function CoursePage({ params }: { params: Promise<{ courseI
           <h2 className="text-2xl font-semibold text-[#002f65]">Modules</h2>
           <span className="text-sm text-[#526b78]">{modules.length} modules</span>
         </div>
-        {modulesWithProgress.length === 0 ? (
+        {modules.length === 0 ? (
           <div className="mt-5 rounded-2xl border border-dashed border-[#9dd7de] bg-white p-10 text-center text-[#526b78]">
             Modules will appear here when the course curriculum is added.
           </div>
         ) : (
           <div className="mt-5 space-y-3">
-            {modulesWithProgress.map(({ module, progress: mp }, index) => {
+            {modules.map((mod, index) => {
+              const mp = mod.progress;
               const isComplete = mp.total > 0 && mp.completed === mp.total;
               const isStarted = mp.completed > 0 && !isComplete;
               return (
                 <Link
-                  key={module.id}
-                  href={`/courses/${courseId}/modules/${module.id}`}
+                  key={mod.id}
+                  href={`/courses/${courseId}/modules/${mod.id}`}
                   className="flex items-center gap-5 rounded-2xl bg-white p-5 ring-1 ring-[#d5e9ed] transition hover:ring-[#007c8b]"
                 >
                   <span className="font-mono text-sm text-[#007c8b]">{String(index + 1).padStart(2, "0")}</span>
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-semibold text-[#002f65]">{module.title}</h3>
-                    {module.description && <p className="mt-0.5 truncate text-sm text-[#526b78]">{module.description}</p>}
+                    <h3 className="font-semibold text-[#002f65]">{mod.title}</h3>
+                    {mod.description && <p className="mt-0.5 truncate text-sm text-[#526b78]">{mod.description}</p>}
                     {mp.total > 0 && (
                       <p className="mt-1 text-xs text-[#526b78]">{mp.completed} of {mp.total} lessons</p>
                     )}

@@ -455,3 +455,35 @@ export async function updateCourseStatus(_previousState: CourseActionState, form
   revalidatePath("/dashboard");
   return { success: true };
 }
+
+export async function resetLearnerProgress(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const userId = String(formData.get("userId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  if (!userId || !courseId) return { error: "User and course are required." };
+  const auth = await assertAdmin();
+  if ("error" in auth) return auth;
+  const { supabase } = auth;
+  const { error } = await supabase.rpc("reset_learner_progress", { p_user_id: userId, p_course_id: courseId });
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}`);
+  revalidatePath("/admin/reports");
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
+export async function reEnrollLearner(_prev: CourseActionState, formData: FormData): Promise<CourseActionState> {
+  const enrollmentId = String(formData.get("enrollmentId") ?? "");
+  const courseId = String(formData.get("courseId") ?? "");
+  const expiresAt = String(formData.get("expires_at") ?? "").trim();
+  if (!enrollmentId) return { error: "Enrollment ID is required." };
+  const auth = await assertAdmin();
+  if ("error" in auth) return auth;
+  const { supabase } = auth;
+  const { error } = await supabase.from("enrollments")
+    .update({ status: "active", completed_at: null, expires_at: expiresAt || null, assigned_at: new Date().toISOString() })
+    .eq("id", enrollmentId);
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/courses/${courseId}`);
+  revalidatePath("/dashboard");
+  return { success: true };
+}

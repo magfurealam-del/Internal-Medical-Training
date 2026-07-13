@@ -69,6 +69,94 @@ export async function listCourses() {
   })) as Course[];
 }
 
+export type DashboardCourse = {
+  course: Course;
+  enrollment: Enrollment;
+  progress: { completed: number; total: number; percentage: number };
+  nextLesson: { lesson: Lesson; module: Module } | null;
+  certificate: { id: string; certificate_number: string; issued_at: string } | null;
+  expired: boolean;
+};
+
+export async function getDashboardData(): Promise<DashboardCourse[]> {
+  const supabase = await createSupabaseServerClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims?.sub;
+  if (!userId) return [];
+
+  // Single parallel batch — no per-course queries
+  const [
+    { data: enrollments },
+    { data: allModules },
+    { data: allLessons },
+    { data: allProgress },
+    { data: allCertificates },
+  ] = await Promise.all([
+    supabase.from("enrollments")
+      .select("id, course_id, status, expires_at, completed_at, courses(id, title, slug, description, status, content_version)")
+      .eq("user_id", userId)
+      .in("status", ["active", "completed"]),
+    supabase.from("modules").select("id, course_id, title, description, sort_order").order("sort_order"),
+    supabase.from("lessons").select("id, module_id, title, slug, content_path, sort_order, is_required").order("sort_order"),
+    supabase.from("lesson_progress").select("lesson_id").eq("user_id", userId).not("completed_at", "is", null),
+    supabase.from("certificates").select("id, course_id, certificate_number, issued_at").eq("user_id", userId),
+  ]);
+
+  if (!enrollments) return [];
+
+  const completedIds = new Set((allProgress ?? []).map((p) => p.lesson_id));
+  const certByCourse = new Map((allCertificates ?? []).map((c) => [c.course_id, c]));
+
+  return (enrollments.map((enrollment) => {
+    const rawCourse = Array.isArray(enrollment.courses) ? enrollment.courses[0] : enrollment.courses;
+    const course = rawCourse as Course | null;
+    if (!course) return null;
+
+    const courseModules = (allModules ?? [])
+      .filter((m) => m.course_id === course.id)
+      .sort((a, b) => a.sort_order - b.sort_order);
+
+    const requiredLessons = (allLessons ?? []).filter((l) => {
+      const mod = courseModules.find((m) => m.id === l.module_id);
+      return mod !== undefined && l.is_required;
+    });
+
+    const completedCount = requiredLessons.filter((l) => completedIds.has(l.id)).length;
+    const total = requiredLessons.length;
+    const percentage = total === 0 ? 0 : Math.round((completedCount / total) * 100);
+
+    // First incomplete lesson across modules in order
+    let nextLesson: { lesson: Lesson; module: Module } | null = null;
+    for (const mod of courseModules) {
+      const moduleLessons = (allLessons ?? [])
+        .filter((l) => l.module_id === mod.id)
+        .sort((a, b) => a.sort_order - b.sort_order);
+      const next = moduleLessons.find((l) => !completedIds.has(l.id));
+      if (next) { nextLesson = { lesson: next as Lesson, module: mod as Module }; break; }
+    }
+
+    const enrollmentData: Enrollment = {
+      id: enrollment.id,
+      status: enrollment.status,
+      expires_at: enrollment.expires_at,
+      completed_at: enrollment.completed_at,
+    };
+
+    const expired = percentage < 100
+      && enrollment.expires_at !== null
+      && new Date(enrollment.expires_at) < new Date();
+
+    return {
+      course: { ...course, enrollment: enrollmentData },
+      enrollment: enrollmentData,
+      progress: { completed: completedCount, total, percentage },
+      nextLesson,
+      certificate: certByCourse.get(course.id) ?? null,
+      expired,
+    };
+  }) as (DashboardCourse | null)[]).filter((x): x is DashboardCourse => x !== null);
+}
+
 export async function listAudienceGroups() {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.from("audience_groups").select("id, name, slug").order("name");

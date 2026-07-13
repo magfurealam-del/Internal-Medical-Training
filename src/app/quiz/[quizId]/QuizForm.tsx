@@ -11,11 +11,15 @@ export default function QuizForm({
   items,
   passPercentage,
   returnHref,
+  nextModuleHref,
+  courseHref,
 }: {
   quizId: string;
   items: QuizItem[];
   passPercentage: number;
   returnHref: string;
+  nextModuleHref: string | null;
+  courseHref: string;
 }) {
   const [state, formAction, pending] = useActionState(submitQuiz, initialState);
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -65,27 +69,44 @@ export default function QuizForm({
 
         {/* Actions */}
         <div className="flex flex-col gap-3 sm:flex-row">
-          {certificate_id && (
+          {passed && nextModuleHref ? (
             <a
-              href={`/certificates/${certificate_id}`}
+              href={nextModuleHref}
               className="flex-1 rounded-xl bg-[#002f65] px-6 py-3 text-center font-semibold text-white transition hover:bg-[#001f43]"
             >
-              View certificate →
+              Next module →
+            </a>
+          ) : passed && !nextModuleHref ? (
+            <a
+              href={courseHref}
+              className="flex-1 rounded-xl bg-[#002f65] px-6 py-3 text-center font-semibold text-white transition hover:bg-[#001f43]"
+            >
+              {certificate_id ? "View certificate →" : "Course complete →"}
+            </a>
+          ) : null}
+          {certificate_id && passed && nextModuleHref && (
+            <a
+              href={`/certificates/${certificate_id}`}
+              className="flex-1 rounded-xl bg-white px-6 py-3 text-center font-semibold text-[#002f65] ring-1 ring-[#d5e9ed] transition hover:ring-[#007c8b]"
+            >
+              View certificate
             </a>
           )}
-          <a
-            href={returnHref}
-            className="flex-1 rounded-xl bg-white px-6 py-3 text-center font-semibold text-[#002f65] ring-1 ring-[#d5e9ed] transition hover:ring-[#007c8b]"
-          >
-            {passed ? "Back to module" : "Review lessons"}
-          </a>
           {!passed && (
-            <button
-              onClick={() => window.location.reload()}
-              className="flex-1 rounded-xl bg-[#007c8b] px-6 py-3 text-center font-semibold text-white transition hover:bg-[#006b78]"
-            >
-              Retry assessment
-            </button>
+            <>
+              <a
+                href={returnHref}
+                className="flex-1 rounded-xl bg-white px-6 py-3 text-center font-semibold text-[#526b78] ring-1 ring-[#d5e9ed] transition hover:ring-[#007c8b]"
+              >
+                Review lessons
+              </a>
+              <button
+                onClick={() => window.location.reload()}
+                className="flex-1 rounded-xl bg-[#007c8b] px-6 py-3 text-center font-semibold text-white transition hover:bg-[#006b78]"
+              >
+                Retry assessment
+              </button>
+            </>
           )}
         </div>
 

@@ -9,7 +9,7 @@ import EnrollmentForm from "@/app/admin/EnrollmentForm";
 import BulkEnrollmentForm from "@/app/admin/BulkEnrollmentForm";
 import CourseStatusForm from "@/app/admin/CourseStatusForm";
 import QuizCreateForm from "@/app/admin/QuizCreateForm";
-import { UpdateDeadlineForm, UnenrollButton } from "@/app/admin/EnrollmentRowActions";
+import { UpdateDeadlineForm, UnenrollButton, ResetProgressButton, ReEnrollForm } from "@/app/admin/EnrollmentRowActions";
 import { EditCourseForm, EditModuleForm, EditLessonForm } from "@/app/admin/EditForms";
 import { ModuleControls, LessonControls } from "@/app/admin/DeleteButtons";
 import { formatDeadline, getDeadlineStatus, deadlineColors } from "@/lib/training/deadlines";
@@ -231,11 +231,24 @@ export default async function AdminCoursePage({ params }: { params: Promise<{ co
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex flex-wrap items-center gap-2">
-                            <UpdateDeadlineForm
-                              enrollmentId={enrollment.id}
+                            {enrollment.status !== "completed" && (
+                              <UpdateDeadlineForm
+                                enrollmentId={enrollment.id}
+                                courseId={courseId}
+                                currentExpiry={enrollment.expires_at}
+                              />
+                            )}
+                            <ResetProgressButton
+                              userId={enrollment.user_id}
                               courseId={courseId}
-                              currentExpiry={enrollment.expires_at}
                             />
+                            {enrollment.status === "completed" && (
+                              <ReEnrollForm
+                                enrollmentId={enrollment.id}
+                                courseId={courseId}
+                                currentExpiry={enrollment.expires_at}
+                              />
+                            )}
                             {enrollment.status !== "completed" && (
                               <UnenrollButton enrollmentId={enrollment.id} courseId={courseId} />
                             )}

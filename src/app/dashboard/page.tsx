@@ -1,21 +1,17 @@
 import Link from "next/link";
-import { getCourseProgress, getNextLesson, listCertificates, listCourses } from "@/lib/training/courses";
-import { formatDeadline, getDeadlineStatus, deadlineColors, isExpired } from "@/lib/training/deadlines";
+import { getDashboardData } from "@/lib/training/courses";
+import { formatDeadline, getDeadlineStatus, deadlineColors } from "@/lib/training/deadlines";
 
 export default async function DashboardPage() {
-  const [courses, certificates] = await Promise.all([listCourses(), listCertificates()]);
-  const coursesWithProgress = await Promise.all(
-    courses.map(async (course) => {
-      const [progress, next] = await Promise.all([getCourseProgress(course.id), getNextLesson(course.id)]);
-      const expired = progress.percentage < 100 && isExpired(course.enrollment?.expires_at ?? null);
-      return { course, progress, next, expired };
-    }),
-  );
+  const enrolledCourses = await getDashboardData();
 
-  // Only suggest active (non-expired, incomplete) courses in the hero
-  const continueLearning = coursesWithProgress.find(({ progress, expired }) => progress.percentage < 100 && !expired);
-  const completedCourses = coursesWithProgress.filter(({ progress }) => progress.percentage === 100);
-  const expiredCourses = coursesWithProgress.filter(({ expired }) => expired);
+  const completedCourses = enrolledCourses.filter(({ progress }) => progress.percentage === 100);
+  const expiredCourses = enrolledCourses.filter(({ expired }) => expired);
+  const activeCourses = enrolledCourses.filter(({ progress, expired }) => progress.percentage < 100 && !expired);
+  const certificates = enrolledCourses.filter(({ certificate }) => certificate !== null);
+
+  // Best candidate for the hero: furthest along active course
+  const continueLearning = activeCourses.sort((a, b) => b.progress.percentage - a.progress.percentage)[0] ?? null;
 
   return (
     <main className="mx-auto max-w-7xl px-6 py-16 lg:px-10">
@@ -26,10 +22,10 @@ export default async function DashboardPage() {
       <div className="mt-10 grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl bg-[#002f65] p-5 text-white">
           <p className="text-sm text-white/65">Assigned courses</p>
-          <p className="mt-2 text-3xl font-semibold">{courses.length}</p>
+          <p className="mt-2 text-3xl font-semibold">{enrolledCourses.length}</p>
         </div>
         <div className="rounded-2xl bg-white p-5 ring-1 ring-[#d5e9ed]">
-          <p className="text-sm text-[#526b78]">Completed courses</p>
+          <p className="text-sm text-[#526b78]">Completed</p>
           <p className="mt-2 text-3xl font-semibold text-[#002f65]">{completedCourses.length}</p>
         </div>
         <div className="rounded-2xl bg-white p-5 ring-1 ring-[#d5e9ed]">
@@ -47,23 +43,22 @@ export default async function DashboardPage() {
           </p>
           <ul className="mt-2 space-y-1">
             {expiredCourses.map(({ course }) => (
-              <li key={course.id} className="text-sm text-[#7c4a00]">
-                — {course.title}
-              </li>
+              <li key={course.id} className="text-sm text-[#7c4a00]">— {course.title}</li>
             ))}
           </ul>
         </section>
       )}
 
+      {/* Hero: continue learning */}
       {continueLearning ? (
         <section className="mt-6 rounded-2xl bg-[#edf7f8] p-6 ring-1 ring-[#c7e7ea]">
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#007c8b]">Continue learning</p>
           <div className="mt-3 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="text-2xl font-semibold text-[#002f65]">{continueLearning.course.title}</h2>
-              {continueLearning.next && (
+              {continueLearning.nextLesson && (
                 <p className="mt-2 text-sm text-[#526b78]">
-                  Next up: <span className="font-medium text-[#002f65]">{continueLearning.next.lesson.title}</span>
+                  Next up: <span className="font-medium text-[#002f65]">{continueLearning.nextLesson.lesson.title}</span>
                 </p>
               )}
               <p className="mt-1 text-sm text-[#526b78]">
@@ -72,13 +67,13 @@ export default async function DashboardPage() {
             </div>
             <Link
               href={
-                continueLearning.next
-                  ? `/courses/${continueLearning.course.id}/modules/${continueLearning.next.module.id}/lessons/${continueLearning.next.lesson.id}`
+                continueLearning.nextLesson
+                  ? `/courses/${continueLearning.course.id}/modules/${continueLearning.nextLesson.module.id}/lessons/${continueLearning.nextLesson.lesson.id}`
                   : `/courses/${continueLearning.course.id}`
               }
               className="rounded-xl bg-[#007c8b] px-5 py-3 text-center text-sm font-semibold text-white transition hover:bg-[#006b78]"
             >
-              {continueLearning.next ? "Continue lesson" : "Resume course"}
+              {continueLearning.nextLesson ? "Continue lesson" : "Resume course"}
             </Link>
           </div>
           <div className="mt-5 h-2 rounded-full bg-white">
@@ -86,7 +81,7 @@ export default async function DashboardPage() {
           </div>
           <p className="mt-2 text-right text-xs text-[#007c8b]">{continueLearning.progress.percentage}% complete</p>
         </section>
-      ) : completedCourses.length === courses.length && courses.length > 0 ? (
+      ) : completedCourses.length === enrolledCourses.length && enrolledCourses.length > 0 ? (
         <section className="mt-6 rounded-2xl bg-[#edf7f8] p-6">
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#007c8b]">All caught up</p>
           <h2 className="mt-2 text-2xl font-semibold text-[#002f65]">You have completed every assigned course.</h2>
@@ -94,12 +89,16 @@ export default async function DashboardPage() {
         </section>
       ) : null}
 
+      {/* All enrolled courses */}
       <section className="mt-10">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold text-[#002f65]">Your courses</h2>
-          <Link href="/courses" className="text-sm font-semibold text-[#007c8b]">View catalogue →</Link>
+          {certificates.length > 0 && (
+            <Link href="/certificates" className="text-sm font-semibold text-[#007c8b]">Certificates →</Link>
+          )}
         </div>
-        {coursesWithProgress.length === 0 ? (
+
+        {enrolledCourses.length === 0 ? (
           <div className="mt-5 rounded-2xl border border-dashed border-[#9dd7de] bg-white p-10 text-center">
             <p className="text-4xl">📋</p>
             <p className="mt-4 font-semibold text-[#002f65]">No courses assigned yet</p>
@@ -116,7 +115,7 @@ export default async function DashboardPage() {
           </div>
         ) : (
           <div className="mt-5 grid gap-5 md:grid-cols-2">
-            {coursesWithProgress.map(({ course, progress, next, expired }) => (
+            {enrolledCourses.map(({ course, progress, nextLesson, certificate, expired, enrollment }) => (
               <Link
                 key={course.id}
                 href={`/courses/${course.id}`}
@@ -128,28 +127,39 @@ export default async function DashboardPage() {
                     {expired ? (
                       <span className="rounded-full bg-[#fff0d6] px-3 py-1 text-xs font-semibold text-[#7c4a00]">Expired</span>
                     ) : progress.percentage === 100 ? (
-                      <span className="rounded-full bg-[#e4f7ec] px-3 py-1 text-xs font-semibold text-[#145c36]">Complete</span>
+                      <span className="rounded-full bg-[#e4f7ec] px-3 py-1 text-xs font-semibold text-[#145c36]">
+                        {certificate ? "Certified" : "Complete"}
+                      </span>
                     ) : (
                       <span className="text-sm font-semibold text-[#007c8b]">{progress.percentage}%</span>
                     )}
                     {!expired && (() => {
-                      const label = formatDeadline(course.enrollment?.expires_at ?? null);
-                      const status = getDeadlineStatus(course.enrollment?.expires_at ?? null);
+                      const label = formatDeadline(enrollment.expires_at);
+                      const status = getDeadlineStatus(enrollment.expires_at);
                       return label ? (
                         <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${deadlineColors[status]}`}>{label}</span>
                       ) : null;
                     })()}
                   </div>
                 </div>
-                {!expired && next && progress.percentage < 100 && (
-                  <p className="mt-2 text-sm text-[#526b78]">Next: <span className="font-medium text-[#002f65]">{next.lesson.title}</span></p>
+
+                {!expired && nextLesson && progress.percentage < 100 && (
+                  <p className="mt-2 text-sm text-[#526b78]">
+                    Next: <span className="font-medium text-[#002f65]">{nextLesson.lesson.title}</span>
+                  </p>
                 )}
                 {expired && (
                   <p className="mt-2 text-sm text-[#b45309]">Deadline passed — contact your coordinator to re-enrol.</p>
                 )}
+                {certificate && progress.percentage === 100 && (
+                  <p className="mt-2 text-xs text-[#007c8b]">
+                    Issued {new Date(certificate.issued_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                  </p>
+                )}
+
                 <div className={`mt-5 h-2 rounded-full ${expired ? "bg-[#f5e4c4]" : "bg-[#d9f2f4]"}`}>
                   <div
-                    className={`h-2 rounded-full transition-all ${expired ? "bg-[#e09c30]" : "bg-[#007c8b]"}`}
+                    className={`h-2 rounded-full transition-all ${expired ? "bg-[#e09c30]" : progress.percentage === 100 ? "bg-[#2ea86b]" : "bg-[#007c8b]"}`}
                     style={{ width: `${progress.percentage}%` }}
                   />
                 </div>

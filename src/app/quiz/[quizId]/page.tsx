@@ -15,11 +15,35 @@ export default async function QuizPage({ params }: { params: Promise<{ quizId: s
   if (!quiz) notFound();
 
   const supabase = await createSupabaseServerClient();
-  const { data: quizRow } = await supabase.from("quizzes").select("module_id, course_id").eq("id", quizId).maybeSingle();
+
+  // Fetch quiz placement and next module in one query
+  const { data: quizRow } = await supabase
+    .from("quizzes")
+    .select("module_id, course_id")
+    .eq("id", quizId)
+    .maybeSingle();
+
   const moduleId = quizRow?.module_id as string | null;
   const courseId = quizRow?.course_id as string;
-  const returnHref = courseId && moduleId ? `/courses/${courseId}/modules/${moduleId}` : "/dashboard";
 
+  // Resolve next module (for post-pass navigation)
+  let nextModuleId: string | null = null;
+  if (courseId && moduleId) {
+    const { data: allModules } = await supabase
+      .from("modules")
+      .select("id, sort_order")
+      .eq("course_id", courseId)
+      .order("sort_order");
+
+    if (allModules) {
+      const idx = allModules.findIndex((m) => m.id === moduleId);
+      if (idx !== -1 && idx < allModules.length - 1) {
+        nextModuleId = allModules[idx + 1].id;
+      }
+    }
+  }
+
+  const returnHref = courseId && moduleId ? `/courses/${courseId}/modules/${moduleId}` : "/dashboard";
   const limitReached = quiz.attempt_limit !== null && attemptCount >= quiz.attempt_limit;
 
   return (
@@ -81,6 +105,8 @@ export default async function QuizPage({ params }: { params: Promise<{ quizId: s
           items={items}
           passPercentage={quiz.pass_percentage}
           returnHref={returnHref}
+          nextModuleHref={nextModuleId && courseId ? `/courses/${courseId}/modules/${nextModuleId}` : null}
+          courseHref={courseId ? `/courses/${courseId}` : "/dashboard"}
         />
       )}
     </main>

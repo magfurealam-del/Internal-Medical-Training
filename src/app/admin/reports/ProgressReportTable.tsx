@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 type ReportRow = {
   id: string;
   user_id: string;
+  course_id: string;
   learner_name: string;
   course_title: string;
   lessons_completed: number;
@@ -102,7 +103,11 @@ export default function ProgressReportTable({
             {filteredRows.map((row) => (
               <tr key={row.id} className={`border-b border-[#edf4f5] last:border-0 ${row.at_risk ? "bg-[#fffaf4]" : ""}`}>
                 <td className="px-5 py-4 font-medium text-[#002f65]">{row.learner_name}</td>
-                <td className="px-5 py-4 text-[#526b78]">{row.course_title}</td>
+                <td className="px-5 py-4 text-[#526b78]">
+                  <Link href={`/admin/courses/${row.course_id}`} className="hover:underline hover:text-[#007c8b]">
+                    {row.course_title}
+                  </Link>
+                </td>
                 <td className="px-5 py-4 text-xs text-[#526b78]">
                   {row.assigned_at
                     ? new Date(row.assigned_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })

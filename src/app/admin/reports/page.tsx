@@ -19,12 +19,12 @@ export default async function AdminReportsPage({ searchParams }: { searchParams:
     : 0;
 
   // Per-course summary
-  const byCourse = new Map<string, { title: string; enrolled: number; completed: number; atRisk: number; passed: number }>();
+  const byCourse = new Map<string, { id: string; title: string; enrolled: number; completed: number; atRisk: number; passed: number }>();
   for (const r of rows) {
-    if (!byCourse.has(r.course_title)) {
-      byCourse.set(r.course_title, { title: r.course_title, enrolled: 0, completed: 0, atRisk: 0, passed: 0 });
+    if (!byCourse.has(r.course_id)) {
+      byCourse.set(r.course_id, { id: r.course_id, title: r.course_title, enrolled: 0, completed: 0, atRisk: 0, passed: 0 });
     }
-    const c = byCourse.get(r.course_title)!;
+    const c = byCourse.get(r.course_id)!;
     c.enrolled++;
     if (r.progress_percentage === 100) c.completed++;
     if (r.at_risk) c.atRisk++;
@@ -133,9 +133,9 @@ export default async function AdminReportsPage({ searchParams }: { searchParams:
                   return (
                     <tr key={c.title} className="border-b border-[#edf4f5] last:border-0">
                       <td className="px-5 py-4 font-medium text-[#002f65]">
-                        <a href={`#learners?course=${encodeURIComponent(c.title)}`} className="hover:underline hover:text-[#007c8b]">
+                        <Link href={`/admin/courses/${c.id}`} className="hover:underline hover:text-[#007c8b]">
                           {c.title}
-                        </a>
+                        </Link>
                       </td>
                       <td className="px-5 py-4 text-[#526b78]">{c.enrolled}</td>
                       <td className="px-5 py-4 text-[#526b78]">{c.completed}</td>
